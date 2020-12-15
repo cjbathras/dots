@@ -15,8 +15,8 @@ def main():
     board = Board()
 
     DISPLAY = pygame.display.set_mode(
-        (config.columns * config.cell_size + c.GUTTER_WIDTH * 2,
-        config.rows * config.cell_size + c.GUTTER_WIDTH * 2 + c.TOP_OFFSET))
+        (config.columns * config.cell_size + c.GUTTER_LEFT + c.GUTTER_RIGHT,
+        config.rows * config.cell_size + c.GUTTER_TOP + c.GUTTER_BOTTOM))
     DISPLAY.fill(c.WHITE)
 
     for row in board.cells:
@@ -32,8 +32,8 @@ def main():
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 x, y = pygame.mouse.get_pos()
-                row = (y - c.GUTTER_WIDTH - c.TOP_OFFSET) // config.cell_size
-                col = (x - c.GUTTER_WIDTH) // config.cell_size
+                row = (y - c.GUTTER_TOP) // config.cell_size
+                col = (x - c.GUTTER_LEFT) // config.cell_size
                 if row < 0:
                     row = 0
                 elif row >= config.rows:
@@ -45,7 +45,6 @@ def main():
                     col = config.columns - 1
 
                 cell = board.get_cell(row, col)
-                print(cell)
                 clicked_edge = cell.get_clicked_edge(x, y)
                 if clicked_edge:
                     cell.set_clicked_edge(clicked_edge)

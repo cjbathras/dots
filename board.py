@@ -17,8 +17,8 @@ class Board:
         for row in range(0, self._config.rows):
             tmp = []
             for column in range(0, self._config.columns):
-                cell = Cell(pygame.Rect(column * self._config.cell_size + c.GUTTER_WIDTH,
-                                        row * self._config.cell_size + c.GUTTER_WIDTH + c.TOP_OFFSET,
+                cell = Cell(pygame.Rect(column * self._config.cell_size + c.GUTTER_LEFT,
+                                        row * self._config.cell_size + c.GUTTER_TOP,
                                         self._config.cell_size,
                                         self._config.cell_size),
                             row,
