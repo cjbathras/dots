@@ -12,7 +12,7 @@ class Board:
         super().__init__()
         self._config = Config()
         self.cells = [] # n x n array
-        self._dirty_cells = [] # list of tuples containing indexes of cells needing redraw
+        self.dirty_cells = [] # list of tuples containing indexes of cells needing redraw
 
         for row in range(0, self._config.rows):
             tmp = []
