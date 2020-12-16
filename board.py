@@ -11,8 +11,6 @@ class Board:
     def __init__(self):
         super().__init__()
         self._config = Config()
-        self.p1_score = 0
-        self.p2_score = 0
         self.cells = [] # n x n array
         self.dirty_cells = [] # list of tuples containing indexes of cells needing redraw
 
@@ -29,6 +27,31 @@ class Board:
                 tmp.append(cell)
 
             self.cells.append(tmp)
+
+    def handle_selection(self, x, y, player):
+        row, col = self.get_row_col_from_pos((x, y))
+
+        cell = self.get_cell(row, col)
+        clicked_edge = cell.get_clicked_edge(x, y)
+        if clicked_edge:
+            cell.set_clicked_edge(clicked_edge, player)
+            self.set_adjacent_clicked_edge(row, col, clicked_edge, player)
+
+    def get_row_col_from_pos(self, pos):
+        x, y = pos
+        row = (y - c.GUTTER_TOP) // self._config.cell_size
+        col = (x - c.GUTTER_LEFT) // self._config.cell_size
+        if row < 0:
+            row = 0
+        elif row >= self._config.rows:
+            row = self._config.rows - 1
+
+        if col < 0:
+            col = 0
+        elif col >= self._config.columns:
+            col = self._config.columns - 1
+
+        return row, col
 
     def get_cell(self, row, col):
         return self.cells[row][col]
@@ -57,8 +80,5 @@ class Board:
                 if cell.is_dirty:
                     cell.draw()
 
-    def increment_score(self, player):
-        if player == c.PLAYER1:
-            self.p1_score += 1
-        else:
-            self.p2_score += 1
+    def __repr__(self):
+        return f'Board {len(self.cells[0])}x{len(self.cells)}'

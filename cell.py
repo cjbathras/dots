@@ -124,3 +124,6 @@ class Cell(pygame.Rect):
 
     def __str__(self):
         return f'Cell [{self.row}, {self.column}]'
+
+    def __repr__(self):
+        return f'Cell [{self.row}, {self.column}]'

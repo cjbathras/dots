@@ -7,6 +7,8 @@ from pygame.locals import *
 from board import Board
 import constants as c
 from config import Config
+from game import Game
+from player import Player
 from scoreboard import Scoreboard
 
 
@@ -31,7 +33,11 @@ def main():
         for cell in row:
             cell.draw()
 
-    current_player = c.PLAYER1
+    game = Game(
+        Player(c.PLAYER1, c.PLAYER1_COLOR),
+        Player(c.PLAYER2, c.PLAYER2_COLOR)
+    )
+    current_player = game.current_player()
 
     while True:
         for event in pygame.event.get():
@@ -42,23 +48,7 @@ def main():
 
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                row = (mouse_y - c.GUTTER_TOP) // config.cell_size
-                col = (mouse_x - c.GUTTER_LEFT) // config.cell_size
-                if row < 0:
-                    row = 0
-                elif row >= config.rows:
-                    row = config.rows - 1
-
-                if col < 0:
-                    col = 0
-                elif col >= config.columns:
-                    col = config.columns - 1
-
-                cell = board.get_cell(row, col)
-                clicked_edge = cell.get_clicked_edge(mouse_x, mouse_y)
-                if clicked_edge:
-                    cell.set_clicked_edge(clicked_edge, current_player)
-                    board.set_adjacent_clicked_edge(row, col, clicked_edge, current_player)
+                board.handle_selection(mouse_x, mouse_y, current_player)
 
                 board.redraw_dirty_cells()
 
