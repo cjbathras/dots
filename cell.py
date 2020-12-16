@@ -11,7 +11,7 @@ class Cell(pygame.Rect):
         self.row = row
         self.column = column
         self.config = Config()
-        self.user = None
+        self.player = None
         self.is_captured = False
         self.is_dirty = False
 
@@ -88,32 +88,39 @@ class Cell(pygame.Rect):
 
         self.is_dirty = False
 
-    def get_clicked_edge(self, x, y):
+    def get_clicked_edge(self, mouse_x, mouse_y):
         clicked_edge = None
 
-        if self.is_in_rect(x, y, self.top_edge_selection_area):
+        if self.is_in_rect(mouse_x, mouse_y, self.top_edge_selection_area):
             clicked_edge = c.TOP
 
-        elif self.is_in_rect(x, y, self.bottom_edge_selection_area):
+        elif self.is_in_rect(mouse_x, mouse_y, self.bottom_edge_selection_area):
             clicked_edge = c.BOTTOM
 
-        elif self.is_in_rect(x, y, self.left_edge_selection_area):
+        elif self.is_in_rect(mouse_x, mouse_y, self.left_edge_selection_area):
             clicked_edge = c.LEFT
 
-        elif self.is_in_rect(x, y, self.right_edge_selection_area):
+        elif self.is_in_rect(mouse_x, mouse_y, self.right_edge_selection_area):
             clicked_edge = c.RIGHT
 
         return clicked_edge
 
-    def set_clicked_edge(self, edge):
+    def set_clicked_edge(self, edge, player):
         if self.edges[edge] == False:
             self.edges[edge] = True
+            self.check_for_capture(player)
             self.is_dirty = True
 
     def is_in_rect(self, x, y, rect):
         if rect.x <= x < rect.x + rect.width and rect.y <= y < rect.y + rect.height:
             return True
         return False
+
+    def check_for_capture(self, player):
+        if all(self.edges.values()):
+            self.player = player
+            self.is_captured = True
+            self.bg_color = c.PLAYER1_COLOR if player == c.PLAYER1 else c.PLAYER2_COLOR
 
     def __str__(self):
         return f'Cell [{self.row}, {self.column}]'

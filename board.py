@@ -11,6 +11,8 @@ class Board:
     def __init__(self):
         super().__init__()
         self._config = Config()
+        self.p1_score = 0
+        self.p2_score = 0
         self.cells = [] # n x n array
         self.dirty_cells = [] # list of tuples containing indexes of cells needing redraw
 
@@ -31,26 +33,32 @@ class Board:
     def get_cell(self, row, col):
         return self.cells[row][col]
 
-    def set_adjacent_clicked_edge(self, row, col, edge):
+    def set_adjacent_clicked_edge(self, row, col, edge, player):
         # Set the edge in the adjacent cell to selected
         if edge == c.TOP:
             if row > 0:
-                self.cells[row - 1][col].set_clicked_edge(c.BOTTOM)
+                self.cells[row - 1][col].set_clicked_edge(c.BOTTOM, player)
 
         elif edge == c.BOTTOM:
             if row < self._config.rows - 1:
-                self.cells[row + 1][col].set_clicked_edge(c.TOP)
+                self.cells[row + 1][col].set_clicked_edge(c.TOP, player)
 
         elif edge == c.LEFT:
             if col > 0:
-                self.cells[row][col - 1].set_clicked_edge(c.RIGHT)
+                self.cells[row][col - 1].set_clicked_edge(c.RIGHT, player)
 
         elif edge == c.RIGHT:
             if col < self._config.columns - 1:
-                self.cells[row][col + 1].set_clicked_edge(c.LEFT)
+                self.cells[row][col + 1].set_clicked_edge(c.LEFT, player)
 
     def redraw_dirty_cells(self):
         for row in self.cells:
             for cell in row:
                 if cell.is_dirty:
                     cell.draw()
+
+    def increment_score(self, player):
+        if player == c.PLAYER1:
+            self.p1_score += 1
+        else:
+            self.p2_score += 1
