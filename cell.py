@@ -111,6 +111,8 @@ class Cell(pygame.Rect):
             self.check_for_capture(player)
             self.is_dirty = True
 
+        return self.is_captured
+
     def is_in_rect(self, x, y, rect):
         if rect.x <= x < rect.x + rect.width and rect.y <= y < rect.y + rect.height:
             return True
@@ -120,7 +122,7 @@ class Cell(pygame.Rect):
         if all(self.edges.values()):
             self.player = player
             self.is_captured = True
-            self.bg_color = c.PLAYER1_COLOR if player == c.PLAYER1 else c.PLAYER2_COLOR
+            self.bg_color = player.color
 
     def __str__(self):
         return f'Cell [{self.row}, {self.column}]'

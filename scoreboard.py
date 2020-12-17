@@ -11,6 +11,7 @@ class Scoreboard(pygame.Rect):
         super().__init__(rect)
         self.bg_color = bg_color
         self.config = Config()
+        self.arrow = pygame.image.load('left-arrow-24.png')
 
         # Player 1
         self.p1_obox = pygame.Rect(self.x, self.y, self.width // 2, self.height)
@@ -33,6 +34,11 @@ class Scoreboard(pygame.Rect):
         self.p1_score_rect = self.p1_score_text.get_rect()
         self.p1_score_rect.center = self.p1_scorebox.center
 
+        self.p1_active_box = pygame.Rect(
+            (self.p1_scorebox.topright[0] + 8, self.p1_scorebox.topright[1] + 4),
+            (24, 24)
+        )
+
         # Player 2
         self.p2_obox = pygame.Rect(self.center[0], self.y, self.width // 2, self.height)
 
@@ -54,6 +60,11 @@ class Scoreboard(pygame.Rect):
         self.p2_score_rect = self.p2_score_text.get_rect()
         self.p2_score_rect.center = self.p2_scorebox.center
 
+        self.p2_active_box = pygame.Rect(
+            (self.p2_scorebox.topright[0] + 8, self.p2_scorebox.topright[1] + 4),
+            (24, 24)
+        )
+
     def draw(self):
         surf = pygame.display.get_surface()
         pygame.draw.rect(surf, self.bg_color, self)
@@ -71,6 +82,18 @@ class Scoreboard(pygame.Rect):
 
         surf.blit(self.p1_score_text, self.p1_score_rect)
         surf.blit(self.p2_score_text, self.p2_score_rect)
+
+        surf.blit(self.arrow, self.p1_active_box)
+
+    def set_active_box(self, player):
+        surf = pygame.display.get_surface()
+
+        if player.name == c.PLAYER1:
+            surf.blit(self.arrow, self.p1_active_box)
+            pygame.draw.rect(surf, self.bg_color, self.p2_active_box)
+        else:
+            surf.blit(self.arrow, self.p2_active_box)
+            pygame.draw.rect(surf, self.bg_color, self.p1_active_box)
 
     def update_p1_score(self, score):
         pass

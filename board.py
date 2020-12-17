@@ -28,14 +28,14 @@ class Board:
 
             self.cells.append(tmp)
 
-    def handle_selection(self, x, y, player):
+    def get_cell_and_edge(self, x, y):
         row, col = self.get_row_col_from_pos((x, y))
-
         cell = self.get_cell(row, col)
-        clicked_edge = cell.get_clicked_edge(x, y)
-        if clicked_edge:
-            cell.set_clicked_edge(clicked_edge, player)
-            self.set_adjacent_clicked_edge(row, col, clicked_edge, player)
+        return cell, cell.get_clicked_edge(x, y)
+
+    def handle_selection(self, cell, edge, player):
+        return cell.set_clicked_edge(edge, player) \
+            or self.set_adjacent_clicked_edge(cell.row, cell.column, edge, player)
 
     def get_row_col_from_pos(self, pos):
         x, y = pos
@@ -57,22 +57,26 @@ class Board:
         return self.cells[row][col]
 
     def set_adjacent_clicked_edge(self, row, col, edge, player):
+        captured = False
+
         # Set the edge in the adjacent cell to selected
         if edge == c.TOP:
             if row > 0:
-                self.cells[row - 1][col].set_clicked_edge(c.BOTTOM, player)
+                captured = self.cells[row - 1][col].set_clicked_edge(c.BOTTOM, player)
 
         elif edge == c.BOTTOM:
             if row < self._config.rows - 1:
-                self.cells[row + 1][col].set_clicked_edge(c.TOP, player)
+                captured = self.cells[row + 1][col].set_clicked_edge(c.TOP, player)
 
         elif edge == c.LEFT:
             if col > 0:
-                self.cells[row][col - 1].set_clicked_edge(c.RIGHT, player)
+                captured = self.cells[row][col - 1].set_clicked_edge(c.RIGHT, player)
 
         elif edge == c.RIGHT:
             if col < self._config.columns - 1:
-                self.cells[row][col + 1].set_clicked_edge(c.LEFT, player)
+                captured = self.cells[row][col + 1].set_clicked_edge(c.LEFT, player)
+
+        return captured
 
     def redraw_dirty_cells(self):
         for row in self.cells:
