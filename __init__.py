@@ -1,5 +1,8 @@
 import pygame
 
+ROWS = 4
+COLS = 4
+
 # Color definitions
 BLACK   = pygame.Color(0, 0, 0)
 BLUE    = pygame.Color(125, 125, 255)
@@ -13,14 +16,16 @@ YELLOW  = pygame.Color(255, 255, 0)
 PLAYER1_COLOR = pygame.Color(110, 219, 139)
 PLAYER2_COLOR = pygame.Color(204, 151, 222)
 
+HIGHLIGHT_COLOR = GREEN
+
 # Dot attributes
 DOT_RAD = 12
 DOT_DIA = 2 * DOT_RAD
 DOT_COLOR = BLACK
 
 # Cell attributes
-CELL_ORIGIN = (0, 0)
-CELL_SIZE = (400, 400)
+ORIGIN = (0, 0)
+CELL_SIZE = (200, 200)
 CELL_WIDTH = CELL_SIZE[0]
 CELL_HEIGHT = CELL_SIZE[1]
 

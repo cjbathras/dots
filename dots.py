@@ -1,44 +1,30 @@
+import math
 import sys
 import time
 
 import pygame
 from pygame.locals import *
 
+from __init__ import *
 from board import Board
-import constants as c
-from config import Config
-from game import Game
-from player import Player
-from scoreboard import Scoreboard
+from cell import Cell
 
 
 def main():
-    config = Config(rows=5, columns=5, cell_size=100, dot_radius=6)
-
     pygame.display.init()
     pygame.display.set_caption('Dots')
 
+    screen = pygame.display.set_mode((
+        COLS * CELL_WIDTH + GUTTER_LEFT + GUTTER_RIGHT,
+        ROWS * CELL_HEIGHT + GUTTER_TOP + GUTTER_BOTTOM
+    ))
+    screen.fill(WHITE)
+
     board = Board()
+    board.assign_neighbors()
+    board.draw(screen)
 
-    display = pygame.display.set_mode(
-        (config.columns * config.cell_size + c.GUTTER_LEFT + c.GUTTER_RIGHT,
-        config.rows * config.cell_size + c.GUTTER_TOP + c.GUTTER_BOTTOM))
-    display.fill(c.WHITE)
-    width, height = pygame.display.get_window_size()
-
-    scoreboard = Scoreboard(pygame.Rect(20, 20, width - 40, c.GUTTER_TOP - 40), c.GRAY)
-    scoreboard.draw()
-
-    for row in board.cells:
-        for cell in row:
-            cell.draw()
-
-    game = Game(
-        Player(c.PLAYER1, c.PLAYER1_COLOR),
-        Player(c.PLAYER2, c.PLAYER2_COLOR)
-    )
-    current_player = game.current_player()
-    scoreboard.set_active_box(current_player)
+    pygame.display.update()
 
     while True:
         for event in pygame.event.get():
@@ -48,20 +34,20 @@ def main():
                 sys.exit()
 
             elif event.type == pygame.MOUSEBUTTONUP:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                clicked_cell, clicked_edge = board.get_cell_and_edge(mouse_x, mouse_y)
-                if clicked_edge:
-                    captured = board.handle_selection(clicked_cell, clicked_edge, current_player)
-                    board.redraw_dirty_cells()
+                pass
 
-                    if captured:
-                        game.increment_score(current_player)
-                    else:
-                        current_player = game.next_player()
-                        scoreboard.set_active_box(current_player)
+            elif event.type == pygame.MOUSEMOTION:
+                mouse_pos = mouse_x, mouse_y = pygame.mouse.get_pos()
+                coords = board.get_row_col(mouse_pos)
+                # print(f'Cell {coords}')
+                if coords:
+                    i, j = coords
+                    cell = board[i][j]
+                    cell.highlight_edge(screen, mouse_pos)
+                    pygame.display.update(cell)
+                    pygame.display.update(cell.neighbors_list)
 
-        pygame.display.update()
-        time.sleep(0.05)
+        time.sleep(0.001)
 
 
 if __name__ == '__main__':
