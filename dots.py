@@ -26,6 +26,7 @@ def main():
 
     pygame.display.update()
 
+    current_cell = None
     while True:
         for event in pygame.event.get():
 
@@ -39,13 +40,20 @@ def main():
             elif event.type == pygame.MOUSEMOTION:
                 mouse_pos = mouse_x, mouse_y = pygame.mouse.get_pos()
                 coords = board.get_row_col(mouse_pos)
-                # print(f'Cell {coords}')
+                print(f'Cell {coords}')
                 if coords:
                     i, j = coords
-                    cell = board[i][j]
+                    cell = board[coords]
                     cell.highlight_edge(screen, mouse_pos)
                     pygame.display.update(cell)
                     pygame.display.update(cell.neighbors_list)
+                    current_cell = cell
+                else:
+                    if current_cell:
+                        current_cell.clear_highlighted_edge()
+                        pygame.display.update(current_cell)
+                        current_cell = None
+
 
         time.sleep(0.001)
 

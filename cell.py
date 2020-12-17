@@ -20,6 +20,7 @@ class Cell(pygame.Rect):
         self.neighbors = None
         self.neighbors_list = []
         self.highlighted_edge = None
+        self.screen = pygame.display.get_surface()
 
         # Value is True if edge has been activated, False otherwise
         self.edge_status = {TOP: False, BOTTOM: False, RIGHT: False, LEFT: False}
@@ -121,20 +122,20 @@ class Cell(pygame.Rect):
                 self.highlighted_edge = None
 
     def highlight_top_edge(self):
-        surface = pygame.display.get_surface()
-        pygame.draw.rect(surface, RED, self.r_top_highlight, width=0)
+        pygame.draw.rect(self.screen, HIGHLIGHT_COLOR, self.r_top_highlight, width=0)
 
     def highlight_bottom_edge(self):
-        surface = pygame.display.get_surface()
-        pygame.draw.rect(surface, RED, self.r_bottom_highlight, width=0)
+        pygame.draw.rect(self.screen, HIGHLIGHT_COLOR, self.r_bottom_highlight, width=0)
 
     def highlight_left_edge(self):
-        surface = pygame.display.get_surface()
-        pygame.draw.rect(surface, RED, self.r_left_highlight, width=0)
+        pygame.draw.rect(self.screen, HIGHLIGHT_COLOR, self.r_left_highlight, width=0)
 
     def highlight_right_edge(self):
-        surface = pygame.display.get_surface()
-        pygame.draw.rect(surface, RED, self.r_right_highlight, width=0)
+        pygame.draw.rect(self.screen, HIGHLIGHT_COLOR, self.r_right_highlight, width=0)
+
+    def clear_highlighted_edge(self):
+        if self.highlighted_edge:
+            pygame.draw.rect(self.screen, WHITE, self.highlighted_edge, width=0)
 
     def __str__(self):
         return f'Cell {self.row}, {self.col} {self.topleft}'

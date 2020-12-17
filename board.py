@@ -22,8 +22,11 @@ class Board:
                 row.append(cell)
             self.board.append(row)
 
-    def __getitem__(self, row):
-        return self.board[row]
+    def __getitem__(self, pos):
+        if isinstance(pos, tuple):
+            return self.board[pos[0]][pos[1]]
+        else:
+            return self.board[pos]
 
     def get_row_col(self, pos):
         x, y = pos
