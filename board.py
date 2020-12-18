@@ -8,6 +8,8 @@ class Board:
     def __init__(self):
         super().__init__()
         self.board = [] # 2*ROWS+1 x 2*COLS+1 array
+        self.row_extents = {}
+        self.col_extents = {}
         self.dots = []
         self.cells = []
         self.edges = []
@@ -46,7 +48,12 @@ class Board:
                     self.edges.append(shape)
 
                 row.append(shape)
+
+                if r == 0:
+                    self.col_extents[c] = (shape.left, shape.right)
+
             self.board.append(row)
+            self.row_extents[r] = (shape.top, shape.bottom)
 
     def __getitem__(self, pos):
         if isinstance(pos, tuple):
@@ -56,18 +63,23 @@ class Board:
 
     def get_row_col(self, pos):
         x, y = pos
-        row = (y - GUTTER_TOP) // CELL_HEIGHT
-        col = (x - GUTTER_LEFT) // CELL_WIDTH
+        row, col = None, None
+        for k, extents in self.col_extents.items():
+            left, right = extents
+            if left <= x < right:
+                col = k
+                break
 
-        if row < 0 or row >= ROWS:
-            row = None
-        if col < 0 or col >= COLS:
-            col = None
+        if col is not None:
+            for k, extents in self.row_extents.items():
+                top, bottom = extents
+                if top <= y < bottom:
+                    row = k
+                    break
+            if row is not None:
+                return row, col
 
-        if row is None or col is None:
-            return None
-        else:
-            return row, col
+        return None
 
     def draw(self, screen):
         for r in range(0, len(self.board)):

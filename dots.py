@@ -32,10 +32,11 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-            elif event.type == pygame.MOUSEBUTTONUP:
-                mouse_pos = mouse_x, mouse_y = pygame.mouse.get_pos()
-
             elif event.type == pygame.MOUSEMOTION:
+                mouse_pos = mouse_x, mouse_y = pygame.mouse.get_pos()
+                location = board.get_row_col(mouse_pos)
+
+            elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_pos = mouse_x, mouse_y = pygame.mouse.get_pos()
 
 
