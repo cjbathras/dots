@@ -7,26 +7,24 @@ from pygame.locals import *
 
 from __init__ import *
 from board import Board
-from cell import Cell
 
 
 def main():
     pygame.display.init()
     pygame.display.set_caption('Dots')
 
+    # Create the game screen and initialize the size
     screen = pygame.display.set_mode((
-        COLS * CELL_WIDTH + GUTTER_LEFT + GUTTER_RIGHT,
-        ROWS * CELL_HEIGHT + GUTTER_TOP + GUTTER_BOTTOM
+        COLS * CELL_WIDTH + (COLS + 1) * EDGE_THICKNESS + GUTTER_LEFT + GUTTER_RIGHT,
+        ROWS * CELL_HEIGHT + (ROWS + 1) * EDGE_THICKNESS + GUTTER_TOP + GUTTER_BOTTOM
     ))
     screen.fill(WHITE)
 
     board = Board()
-    board.assign_neighbors()
     board.draw(screen)
 
     pygame.display.update()
 
-    current_cell = None
     while True:
         for event in pygame.event.get():
 
@@ -35,24 +33,10 @@ def main():
                 sys.exit()
 
             elif event.type == pygame.MOUSEBUTTONUP:
-                pass
+                mouse_pos = mouse_x, mouse_y = pygame.mouse.get_pos()
 
             elif event.type == pygame.MOUSEMOTION:
                 mouse_pos = mouse_x, mouse_y = pygame.mouse.get_pos()
-                coords = board.get_row_col(mouse_pos)
-                print(f'Cell {coords}')
-                if coords:
-                    i, j = coords
-                    cell = board[coords]
-                    cell.highlight_edge(screen, mouse_pos)
-                    pygame.display.update(cell)
-                    pygame.display.update(cell.neighbors_list)
-                    current_cell = cell
-                else:
-                    if current_cell:
-                        current_cell.clear_highlighted_edge()
-                        pygame.display.update(current_cell)
-                        current_cell = None
 
 
         time.sleep(0.001)

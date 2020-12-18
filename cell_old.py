@@ -91,35 +91,45 @@ class Cell(pygame.Rect):
         pygame.draw.circle(surface, BLACK, self.r_dot_bl.center, DOT_RAD)
         pygame.draw.circle(surface, BLACK, self.r_dot_br.center, DOT_RAD)
 
-    def highlight_edge(self, surface, pos):
-        if self.r_top_edge.collidepoint(pos):
-            pygame.draw.rect(surface, HIGHLIGHT_COLOR, self.r_top_highlight, width=0)
+    def highlight_edge(self, pos):
+        if not self.edge_status[TOP] and self.r_top_edge.collidepoint(pos):
+            pygame.draw.rect(self.screen, HIGHLIGHT_COLOR, self.r_top_highlight, width=0)
             self.highlighted_edge = self.r_top_highlight
-            if self.neighbors.top:
-                self.neighbors.top.highlight_bottom_edge()
 
-        elif self.r_bottom_edge.collidepoint(pos):
-            pygame.draw.rect(surface, HIGHLIGHT_COLOR, self.r_bottom_highlight, width=0)
+        elif not self.edge_status[BOTTOM] and self.r_bottom_edge.collidepoint(pos):
+            pygame.draw.rect(self.screen, HIGHLIGHT_COLOR, self.r_bottom_highlight, width=0)
             self.highlighted_edge = self.r_bottom_highlight
-            if self.neighbors.bottom:
-                self.neighbors.bottom.highlight_top_edge()
 
-        elif self.r_left_edge.collidepoint(pos):
-            pygame.draw.rect(surface, HIGHLIGHT_COLOR, self.r_left_highlight, width=0)
+        elif not self.edge_status[LEFT] and self.r_left_edge.collidepoint(pos):
+            pygame.draw.rect(self.screen, HIGHLIGHT_COLOR, self.r_left_highlight, width=0)
             self.highlighted_edge = self.r_left_highlight
-            if self.neighbors.left:
-                self.neighbors.left.highlight_right_edge()
 
-        elif self.r_right_edge.collidepoint(pos):
-            pygame.draw.rect(surface, HIGHLIGHT_COLOR, self.r_right_highlight, width=0)
+        elif not self.edge_status[RIGHT] and self.r_right_edge.collidepoint(pos):
+            pygame.draw.rect(self.screen, HIGHLIGHT_COLOR, self.r_right_highlight, width=0)
             self.highlighted_edge = self.r_right_highlight
-            if self.neighbors.right:
-                self.neighbors.right.highlight_left_edge()
 
         else:
+            # Since the pos is not on an edge, reset the highlighted edge if
+            # the highlighted edge is set.
             if self.highlighted_edge:
-                pygame.draw.rect(surface, self.bg_color, self.highlighted_edge, width=0)
+                pygame.draw.rect(self.screen, self.bg_color, self.highlighted_edge, width=0)
                 self.highlighted_edge = None
+
+    def get_edge(self, pos):
+        if self.r_top_edge.collidepoint(pos):
+            return TOP
+
+        elif self.r_bottom_edge.collidepoint(pos):
+            return BOTTOM
+
+        elif self.r_left_edge.collidepoint(pos):
+            return LEFT
+
+        elif self.r_right_edge.collidepoint(pos):
+            return RIGHT
+
+        else:
+            return None
 
     def highlight_top_edge(self):
         pygame.draw.rect(self.screen, HIGHLIGHT_COLOR, self.r_top_highlight, width=0)
@@ -136,6 +146,24 @@ class Cell(pygame.Rect):
     def clear_highlighted_edge(self):
         if self.highlighted_edge:
             pygame.draw.rect(self.screen, WHITE, self.highlighted_edge, width=0)
+
+    def set_edge(self, edge):
+        if edge == TOP and not self.edge_status[TOP]:
+            self.edge_status[TOP] = True
+            pygame.draw.rect(self.screen, SET_COLOR, self.r_top_edge, width=0)
+            self.neighbors.top.set_edge(BOTTOM)
+        elif edge == BOTTOM and not self.edge_status[BOTTOM]:
+            self.edge_status[BOTTOM] = True
+            pygame.draw.rect(self.screen, SET_COLOR, self.r_bottom_edge, width=0)
+            self.neighbors.bottom.set_edge(TOP)
+        elif edge == LEFT and not self.edge_status[LEFT]:
+            self.edge_status[LEFT] = True
+            pygame.draw.rect(self.screen, SET_COLOR, self.r_left_edge, width=0)
+            self.neighbors.left.set_edge(RIGHT)
+        elif edge == RIGHT and not self.edge_status[RIGHT]:
+            self.edge_status[RIGHT] = True
+            pygame.draw.rect(self.screen, SET_COLOR, self.r_right_edge, width=0)
+            self.neighbors.right.set_edge(LEFT)
 
     def __str__(self):
         return f'Cell {self.row}, {self.col} {self.topleft}'

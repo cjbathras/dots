@@ -1,25 +1,51 @@
 import pygame
 
 from __init__ import *
-from cell import Cell
+from shape import Shape
 
 
 class Board:
     def __init__(self):
         super().__init__()
-        self.board = [] # ROWS x COLS array
+        self.board = [] # 2*ROWS+1 x 2*COLS+1 array
+        self.dots = []
+        self.cells = []
+        self.edges = []
 
-        for r in range(0, ROWS):
+        for r in range(0, (2 * ROWS + 1)):
             row = []
-            for c in range(0, COLS):
-                cell = Cell(
-                    (c * CELL_WIDTH + GUTTER_LEFT, r * CELL_HEIGHT + GUTTER_TOP),
-                    CELL_SIZE,
-                    r,
-                    c,
-                    WHITE
-                )
-                row.append(cell)
+            for c in range(0, (2 * COLS + 1)):
+                if is_even(r) and is_even(c):
+                    # dot
+                    size = (DOT_DIA, DOT_DIA)
+                    origin = (c // 2 * DOT_DIA + c // 2 * CELL_WIDTH + GUTTER_LEFT,
+                              r // 2 * DOT_DIA + r // 2 * CELL_HEIGHT + GUTTER_TOP)
+                    shape = Shape(origin, size, r, c, DOT, DOT_COLOR)
+                    self.dots.append(shape)
+
+                elif is_odd(r) and is_odd(c):
+                    # cell
+                    size = CELL_SIZE
+                    origin = ((c + 1) // 2 * EDGE_THICKNESS + (c - 1) // 2 * CELL_WIDTH + GUTTER_LEFT,
+                              (r + 1) // 2 * EDGE_THICKNESS + (r - 1) // 2 * CELL_HEIGHT + GUTTER_TOP)
+                    shape = Shape(origin, size, r, c, CELL, CELL_COLOR_DEFAULT)
+                    self.cells.append(shape)
+
+                else:
+                    # edge
+                    if is_even(r):
+                        size = (CELL_WIDTH, EDGE_THICKNESS)
+                        origin = ((c + 1) // 2 * DOT_DIA + (c - 1) // 2 * CELL_WIDTH + GUTTER_LEFT,
+                                  r // 2 * DOT_DIA + r // 2 * CELL_HEIGHT + GUTTER_TOP)
+                        shape = Shape(origin, size, r, c, EDGE, EDGE_COLOR_DEFAULT)
+                    else:
+                        size = (EDGE_THICKNESS, CELL_HEIGHT)
+                        origin = (c // 2 * DOT_DIA + c // 2 * CELL_WIDTH + GUTTER_LEFT,
+                                  (r + 1) // 2 * DOT_DIA + r // 2 * CELL_HEIGHT + GUTTER_TOP)
+                        shape = Shape(origin, size, r, c, EDGE, EDGE_COLOR_DEFAULT)
+                    self.edges.append(shape)
+
+                row.append(shape)
             self.board.append(row)
 
     def __getitem__(self, pos):
@@ -43,37 +69,10 @@ class Board:
         else:
             return row, col
 
-    def assign_neighbors(self):
-        for r in range(0, ROWS):
-            for c in range(0, COLS):
-                if r == 0: # top row
-                    if c == 0: # first col
-                        self.board[r][c].assign_neighbors(top=None, bottom=self.board[r+1][c], left=None, right=self.board[r][c+1])
-                    elif c == COLS - 1: # last col
-                        self.board[r][c].assign_neighbors(top=None, bottom=self.board[r+1][c], left=self.board[r][c-1], right=None)
-                    else: # inner cols
-                        self.board[r][c].assign_neighbors(top=None, bottom=self.board[r+1][c], left=self.board[r][c-1], right=self.board[r][c+1])
-
-                elif r == ROWS - 1: # bottom row
-                    if c == 0: # first col
-                        self.board[r][c].assign_neighbors(top=self.board[r-1][c], bottom=None, left=None, right=self.board[r][c+1])
-                    elif c == COLS - 1: # last col
-                        self.board[r][c].assign_neighbors(top=self.board[r-1][c], bottom=None, left=self.board[r][c-1], right=None)
-                    else: # inner cols
-                        self.board[r][c].assign_neighbors(top=self.board[r-1][c], bottom=None, left=self.board[r][c-1], right=self.board[r][c+1])
-
-                else: # inner rows
-                    if c == 0: # first col
-                        self.board[r][c].assign_neighbors(top=self.board[r-1][c], bottom=self.board[r+1][c], left=None, right=self.board[r][c+1])
-                    elif c == COLS - 1: # last col
-                        self.board[r][c].assign_neighbors(top=self.board[r-1][c], bottom=self.board[r+1][c], left=self.board[r][c-1], right=None)
-                    else: # inner cols
-                        self.board[r][c].assign_neighbors(top=self.board[r-1][c], bottom=self.board[r+1][c], left=self.board[r][c-1], right=self.board[r][c+1])
-
     def draw(self, screen):
-        for r in range(0, ROWS):
-            for c in range(0, COLS):
+        for r in range(0, len(self.board)):
+            for c in range(0, len(self.board[0])):
                 self.board[r][c].draw(screen)
 
     def __repr__(self):
-        return f'Board {len(self.board[0])}x{len(self.board)}'
+        return f'{type(self).__name__} {len(self.board[0])}x{len(self.board)}'
