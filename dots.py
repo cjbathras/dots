@@ -1,6 +1,7 @@
 import argparse
 import sys
 import time
+import traceback
 
 import pygame
 from pygame.locals import *
@@ -47,8 +48,8 @@ def play(args):
     screen.fill(WHITE)
 
     # Create the players
-    player1 = Player(args.p, PLAYER1_COLOR)
-    player2 = Player(args.y, PLAYER2_COLOR)
+    player1 = Player(args.p[0], PLAYER1_COLOR)
+    player2 = Player(args.p[1], PLAYER2_COLOR)
 
     # Create the game
     game = Game(player1, player2)
@@ -117,7 +118,8 @@ if __name__ == '__main__':
         args = parse_args()
         play(args)
     except Exception as e:
-        print(e)
+        print()
+        print(traceback.format_exc())
         parser.print_usage()
     finally:
         pygame.quit()
