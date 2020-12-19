@@ -22,7 +22,6 @@ class Cell(Entity):
             self.is_captured = True
             self.captured_by = player
             self.bg_color = player.color
-            player.increment_captured_cells()
             self.draw()
             return True
         return False
