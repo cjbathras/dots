@@ -4,6 +4,7 @@ from __init__ import *
 
 GAP = 20
 
+
 class Scoreboard(pygame.Rect):
     def __init__(self, rect, bg_color, game):
         super().__init__(rect)
@@ -35,7 +36,7 @@ class Scoreboard(pygame.Rect):
         self.p1_score_rect.center = self.p1_scorebox.center
 
         self.p1_active_box = pygame.Rect(
-            (self.p1_scorebox.topright[0] + 8, self.p1_scorebox.topright[1] + 4),
+            (self.p1_scorebox.topright[0] + 4, self.p1_scorebox.topright[1] + 4),
             (24, 24)
         )
 
@@ -61,7 +62,7 @@ class Scoreboard(pygame.Rect):
         self.p2_score_rect.center = self.p2_scorebox.center
 
         self.p2_active_box = pygame.Rect(
-            (self.p2_scorebox.topright[0] + 8, self.p2_scorebox.topright[1] + 4),
+            (self.p2_scorebox.topright[0] + 4, self.p2_scorebox.topright[1] + 4),
             (24, 24)
         )
 

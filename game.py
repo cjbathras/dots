@@ -1,12 +1,15 @@
 from __init__ import *
+from config import Config
+
 
 class Game:
     def __init__(self, *players):
         super().__init__()
+        self.cfg = Config()
         self.players = list(players)
         self.player_ptr = 0
         self.scores = {p: 0 for p in self.players}
-        self.tgt_total = ROWS * COLS
+        self.tgt_total = self.cfg.ROWS * self.cfg.COLS
         self.total = 0
 
     def next_player(self):

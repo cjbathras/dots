@@ -1,10 +1,12 @@
 from __init__ import *
+from config import Config
 from entity import Entity
 
 
 class Edge(Entity):
     def __init__(self, origin, size, row, col, bg_color):
         super().__init__(origin, size, row, col, bg_color)
+        self.cfg = Config()
         self.is_activated = False
         self.cell1 = None
         self.cell2 = None
@@ -15,7 +17,7 @@ class Edge(Entity):
 
     def highlight(self):
         if not self.is_activated:
-            pygame.draw.rect(self.screen, EDGE_COLOR_ACTIVATED, self, width=1)
+            pygame.draw.rect(self.screen, self.cfg.EDGE_COLOR_ACTIVATED, self, width=1)
             pygame.display.update(self)
 
     def clear(self):
@@ -24,7 +26,7 @@ class Edge(Entity):
     def activate(self):
         if not self.is_activated:
             self.is_activated = True
-            self.bg_color = EDGE_COLOR_ACTIVATED
+            self.bg_color = self.cfg.EDGE_COLOR_ACTIVATED
             self.draw()
             return True
         return False

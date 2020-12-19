@@ -1,12 +1,8 @@
 from abc import ABCMeta, abstractmethod
-# from collections import namedtuple
 
 import pygame
 
 from __init__ import *
-
-
-# Neighbors = namedtuple('Neighbors', ['top', 'bottom', 'left', 'right'])
 
 
 class Entity(pygame.Rect, metaclass=ABCMeta):

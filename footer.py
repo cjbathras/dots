@@ -2,6 +2,7 @@ import pygame
 
 from __init__ import *
 
+
 class Footer(pygame.Rect):
     def __init__(self, rect, bg_color):
         super().__init__(rect)

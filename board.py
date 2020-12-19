@@ -3,6 +3,7 @@ import pygame
 from __init__ import *
 # from entity import Entity
 from cell import Cell
+from config import Config
 from dot import Dot
 from edge import Edge
 
@@ -10,6 +11,7 @@ from edge import Edge
 class Board:
     def __init__(self):
         super().__init__()
+        self.cfg = Config()
 
         # A 2D array holding all of the entities that comprise the board
         # Size is 2*ROWS+1 x 2*COLS+1
@@ -25,46 +27,37 @@ class Board:
         # the key is the column number and the value is a tuple of (left, right)
         self.col_extents = {}
 
-        # A list of all of the dots in left to right and top to bottom order
-        # self.dots = []
-
-        # A list of all of the cells in left to right and top to bottom order
-        # self.cells = []
-
-        # A list of all of the edges in left to right and top to bottom order
-        # self.edges = []
-
-        for r in range(0, (2 * ROWS + 1)):
+        for r in range(0, (2 * self.cfg.ROWS + 1)):
             row = []
-            for c in range(0, (2 * COLS + 1)):
+            for c in range(0, (2 * self.cfg.COLS + 1)):
                 if is_even(r) and is_even(c):
                     # dot
-                    size = (DOT_DIA, DOT_DIA)
-                    origin = (c // 2 * DOT_DIA + c // 2 * CELL_WIDTH + GUTTER_LEFT,
-                              r // 2 * DOT_DIA + r // 2 * CELL_HEIGHT + GUTTER_TOP * 2 + SCOREBOARD_HEIGHT)
-                    entity = Dot(origin, size, r, c, DOT_COLOR)
+                    size = (self.cfg.DOT_DIA, self.cfg.DOT_DIA)
+                    origin = (c // 2 * self.cfg.DOT_DIA + c // 2 * self.cfg.CELL_WIDTH + self.cfg.GUTTER_LEFT,
+                              r // 2 * self.cfg.DOT_DIA + r // 2 * self.cfg.CELL_HEIGHT + self.cfg.GUTTER_TOP * 2 + self.cfg.SCOREBOARD_HEIGHT)
+                    entity = Dot(origin, size, r, c, self.cfg.DOT_COLOR)
                     #self.dots.append(entity)
 
                 elif is_odd(r) and is_odd(c):
                     # cell
-                    size = CELL_SIZE
-                    origin = ((c + 1) // 2 * EDGE_THICKNESS + (c - 1) // 2 * CELL_WIDTH + GUTTER_LEFT,
-                              (r + 1) // 2 * EDGE_THICKNESS + (r - 1) // 2 * CELL_HEIGHT + GUTTER_TOP * 2 + SCOREBOARD_HEIGHT)
-                    entity = Cell(origin, size, r, c, CELL_COLOR_DEFAULT)
+                    size = self.cfg.CELL_SIZE
+                    origin = ((c + 1) // 2 * self.cfg.EDGE_THICKNESS + (c - 1) // 2 * self.cfg.CELL_WIDTH + self.cfg.GUTTER_LEFT,
+                              (r + 1) // 2 * self.cfg.EDGE_THICKNESS + (r - 1) // 2 * self.cfg.CELL_HEIGHT + self.cfg.GUTTER_TOP * 2 + self.cfg.SCOREBOARD_HEIGHT)
+                    entity = Cell(origin, size, r, c, self.cfg.CELL_COLOR_DEFAULT)
                     #self.cells.append(entity)
 
                 else:
                     # edge
                     if is_even(r):
-                        size = (CELL_WIDTH, EDGE_THICKNESS)
-                        origin = ((c + 1) // 2 * DOT_DIA + (c - 1) // 2 * CELL_WIDTH + GUTTER_LEFT,
-                                  r // 2 * DOT_DIA + r // 2 * CELL_HEIGHT + GUTTER_TOP * 2 + SCOREBOARD_HEIGHT)
-                        entity = Edge(origin, size, r, c, EDGE_COLOR_DEFAULT)
+                        size = (self.cfg.CELL_WIDTH, self.cfg.EDGE_THICKNESS)
+                        origin = ((c + 1) // 2 * self.cfg.DOT_DIA + (c - 1) // 2 * self.cfg.CELL_WIDTH + self.cfg.GUTTER_LEFT,
+                                  r // 2 * self.cfg.DOT_DIA + r // 2 * self.cfg.CELL_HEIGHT + self.cfg.GUTTER_TOP * 2 + self.cfg.SCOREBOARD_HEIGHT)
+                        entity = Edge(origin, size, r, c, self.cfg.EDGE_COLOR_DEFAULT)
                     else:
-                        size = (EDGE_THICKNESS, CELL_HEIGHT)
-                        origin = (c // 2 * DOT_DIA + c // 2 * CELL_WIDTH + GUTTER_LEFT,
-                                  (r + 1) // 2 * DOT_DIA + r // 2 * CELL_HEIGHT + GUTTER_TOP * 2 + SCOREBOARD_HEIGHT)
-                        entity = Edge(origin, size, r, c, EDGE_COLOR_DEFAULT)
+                        size = (self.cfg.EDGE_THICKNESS, self.cfg.CELL_HEIGHT)
+                        origin = (c // 2 * self.cfg.DOT_DIA + c // 2 * self.cfg.CELL_WIDTH + self.cfg.GUTTER_LEFT,
+                                  (r + 1) // 2 * self.cfg.DOT_DIA + r // 2 * self.cfg.CELL_HEIGHT + self.cfg.GUTTER_TOP * 2 + self.cfg.SCOREBOARD_HEIGHT)
+                        entity = Edge(origin, size, r, c, self.cfg.EDGE_COLOR_DEFAULT)
                     #self.edges.append(entity)
 
                 row.append(entity)
@@ -121,13 +114,13 @@ class Board:
                     if r == 0:
                         entity.cell1 = None
                         entity.cell2 = self.board[r+1][c]
-                    elif r == 2*ROWS:
+                    elif r == 2 * self.cfg.ROWS:
                         entity.cell1 = self.board[r-1][c]
                         entity.cell2 = None
                     elif c == 0:
                         entity.cell1 = None
                         entity.cell2 = self.board[r][c+1]
-                    elif c == 2*COLS:
+                    elif c == 2 * self.cfg.COLS:
                         entity.cell1 = self.board[r][c-1]
                         entity.cell2 = None
                     elif is_even(r):

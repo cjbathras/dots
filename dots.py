@@ -9,6 +9,7 @@ from pygame.locals import *
 from __init__ import *
 from board import Board
 from cell import Cell
+from config import Config
 from dot import Dot
 from edge import Edge
 from footer import Footer
@@ -29,21 +30,25 @@ def parse_args():
                         help='number of rows of cells (default: 4)')
     parser.add_argument('-c', metavar='COLUMNS', default='4', type=int,
                         help='number of columns of cells (default: 4)')
+    parser.add_argument('-w', metavar='CELL_WIDTH', default='100', type=int,
+                        help='width of cells (default: 100 pixels)')
+    parser.add_argument('-t', metavar='CELL_HEIGHT', default='100', type=int,
+                        help='height of cells (default: 100 pixels)')
     parser.add_argument('-p', metavar='PLAYER', default=['Player1', 'Player2'], nargs=2,
                         help='names of the two players (default: Player1 Player2)')
     args = parser.parse_args()
     return args
 
 
-def play(args):
+def play(args, cfg):
     # Initialize pygame
     pygame.display.init()
     pygame.display.set_caption('Dots')
 
     # Create the game screen and initialize the size
     screen = pygame.display.set_mode((
-        COLS * CELL_WIDTH + (COLS + 1) * EDGE_THICKNESS + GUTTER_LEFT + GUTTER_RIGHT,
-        ROWS * CELL_HEIGHT + (ROWS + 1) * EDGE_THICKNESS + GUTTER_TOP * 2 + SCOREBOARD_HEIGHT + GUTTER_BOTTOM * 2 + FOOTER_HEIGHT
+        cfg.COLS * cfg.CELL_WIDTH + (cfg.COLS + 1) * cfg.EDGE_THICKNESS + cfg.GUTTER_LEFT + cfg.GUTTER_RIGHT,
+        cfg.ROWS * cfg.CELL_HEIGHT + (cfg.ROWS + 1) * cfg.EDGE_THICKNESS + cfg.GUTTER_TOP * 2 + cfg.SCOREBOARD_HEIGHT + cfg.GUTTER_BOTTOM * 2 + cfg.FOOTER_HEIGHT
     ))
     screen.fill(WHITE)
 
@@ -60,14 +65,15 @@ def play(args):
     board.draw()
 
     # Create the scoreboard
-    scoreboard = Scoreboard(pygame.Rect(SCOREBOARD_ORIGIN, SCOREBOARD_SIZE), LIGHT_GRAY, game)
+    scoreboard = Scoreboard(pygame.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE), LIGHT_GRAY, game)
     scoreboard.draw()
 
     # Create the footer
-    footer = Footer(pygame.Rect(FOOTER_ORIGIN, FOOTER_SIZE), LIGHT_GRAY)
+    footer = Footer(pygame.Rect(cfg.FOOTER_ORIGIN, cfg.FOOTER_SIZE), LIGHT_GRAY)
 
     highlighted_edge = None
 
+    # Game play loop
     while True:
         for event in pygame.event.get():
 
@@ -116,7 +122,10 @@ def play(args):
 if __name__ == '__main__':
     try:
         args = parse_args()
-        play(args)
+        # Config MUST be initialized here for the singleton to be configured
+        # properly for use elsewhere
+        config = Config(rows=args.r, cols=args.c, cell_size=(args.w, args.t))
+        play(args, config)
     except Exception as e:
         print()
         print(traceback.format_exc())
