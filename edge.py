@@ -1,10 +1,14 @@
+import pygame
+
 from __init__ import *
 from config import Config
 from entity import Entity
 
 
 class Edge(Entity):
-    def __init__(self, origin: tuple, size: tuple, row: int, col: int, bg_color: pygame.Color):
+    def __init__(self, origin: tuple, size: tuple, row: int, col: int, 
+        bg_color: pygame.Color):
+        
         super().__init__(origin, size, row, col, bg_color)
         self.cfg = Config()
         self.is_activated = False
@@ -17,7 +21,8 @@ class Edge(Entity):
 
     def highlight(self) -> None:
         if not self.is_activated:
-            pygame.draw.rect(self.screen, self.cfg.EDGE_COLOR_ACTIVATED, self, width=1)
+            pygame.draw.rect(self.screen, self.cfg.EDGE_COLOR_ACTIVATED, self, 
+                width=1)
             pygame.display.update(self)
 
     def clear(self) -> None:
@@ -30,3 +35,25 @@ class Edge(Entity):
             self.draw()
             return True
         return False
+
+    def __str__(self) -> str:
+        if self.cell1 and self.cell2:
+            return f'{type(self).__name__}[{self.row},{self.col}]: ' \
+                f'origin={self.topleft} size={self.size} ' \
+                f'cell_1={self.cell1.row},{self.cell1.col} ' \
+                f'cell_2={self.cell2.row},{self.cell2.col}'
+        elif self.cell1:
+            return f'{type(self).__name__}[{self.row},{self.col}]: ' \
+                f'origin={self.topleft} size={self.size} ' \
+                f'cell_1={self.cell1.row},{self.cell1.col} cell_2=None'
+        elif self.cell2:
+            return f'{type(self).__name__}[{self.row},{self.col}]: ' \
+                f'origin={self.topleft} size={self.size} ' \
+                f'cell_1=None cell_2={self.cell2.row},{self.cell2.col}'
+        else:
+            return f'{type(self).__name__}[{self.row},{self.col}]: ' \
+                f'origin={self.topleft} size={self.size} ' \
+                f'cell_1=None cell_2=None'
+
+    def __repr__(self) -> str:
+        return repr(self)

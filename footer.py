@@ -10,14 +10,17 @@ class Footer(pygame.Rect):
         self.bg_color = bg_color
         self.screen = pygame.display.get_surface()
 
-        self.play_again_text = FONT_LATO_LIGHT_14.render('Play again?', True, BLACK)
+        self.play_again_text = \
+            FONT_LATO_LIGHT_14.render('Play again?', True, BLACK)
         self.play_again_text_rect = self.play_again_text.get_rect()
         self.play_again_button = pygame.Rect(
             (0,0), 
-            (self.play_again_text_rect.width + 10, self.play_again_text_rect.height + 10)
+            (self.play_again_text_rect.width + 10, 
+            self.play_again_text_rect.height + 10)
         )
         self.play_again_button.bottomright = (self.right - 10, self.bottom - 10)
-        self.play_again_text_rect.topleft = (self.play_again_button.left + 5, self.play_again_button.top + 5)
+        self.play_again_text_rect.topleft = \
+            (self.play_again_button.left + 5, self.play_again_button.top + 5)
 
     def draw(self, winner: Player) -> None:
         # Create the message text
@@ -39,4 +42,11 @@ class Footer(pygame.Rect):
 
     def clear(self) -> None:
         pygame.draw.rect(self.screen, BACKGROUND_COLOR, self)
+
+    def __str__(self) -> str:
+        return f'{type(self).__name__}: ' \
+            f'origin={self.topleft} size={self.size}'
+
+    def __repr__(self) -> str:
+        return str(self)
         

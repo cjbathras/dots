@@ -27,15 +27,20 @@ parser = argparse.ArgumentParser(description=DESCRIPTION)
 
 def parse_args():
     parser.add_argument('-r', metavar='ROWS', default='4', type=int,
-                        help='number of rows of cells (default: 4)')
+        help='number of rows of cells (default: 4)')
+
     parser.add_argument('-c', metavar='COLUMNS', default='4', type=int,
-                        help='number of columns of cells (default: 4)')
-    parser.add_argument('-w', metavar='CELL_WIDTH', default='100', type=int,
-                        help='width of cells (default: 100 pixels)')
+        help='number of columns of cells (default: 4)')
+
+    parser.add_argument('-w', metavar='CELL_WIDTH', default='100', type=int, 
+        help='width of cells (default: 100 pixels)')
+
     parser.add_argument('-t', metavar='CELL_HEIGHT', default='100', type=int,
-                        help='height of cells (default: 100 pixels)')
-    parser.add_argument('-p', metavar='PLAYER', default=['Player1', 'Player2'], nargs=2,
-                        help='names of the two players (default: Player1 Player2)')
+        help='height of cells (default: 100 pixels)')
+
+    parser.add_argument('-p', metavar='PLAYER', default=['Alice', 'Bob'], 
+        nargs=2, help='names of the two players (default: Alice Bob)')
+
     args = parser.parse_args()
     return args
 
@@ -45,8 +50,17 @@ def play(args, cfg):
     pygame.display.init()
     pygame.display.set_caption('Dots')
     screen = pygame.display.set_mode((
-        cfg.COLS * cfg.CELL_WIDTH + (cfg.COLS + 1) * cfg.EDGE_THICKNESS + cfg.GUTTER_LEFT + cfg.GUTTER_RIGHT,
-        cfg.ROWS * cfg.CELL_HEIGHT + (cfg.ROWS + 1) * cfg.EDGE_THICKNESS + cfg.GUTTER_TOP * 2 + cfg.SCOREBOARD_HEIGHT + cfg.GUTTER_BOTTOM * 2 + cfg.FOOTER_HEIGHT
+        cfg.COLS * cfg.CELL_WIDTH 
+        + (cfg.COLS + 1) * cfg.EDGE_THICKNESS 
+        + cfg.GUTTER_LEFT 
+        + cfg.GUTTER_RIGHT,
+
+        cfg.ROWS * cfg.CELL_HEIGHT 
+        + (cfg.ROWS + 1) * cfg.EDGE_THICKNESS 
+        + cfg.GUTTER_TOP * 2 
+        + cfg.SCOREBOARD_HEIGHT 
+        + cfg.GUTTER_BOTTOM * 2 
+        + cfg.FOOTER_HEIGHT
     ))
 
     # Create the static components
@@ -54,7 +68,10 @@ def play(args, cfg):
     player2 = Player(args.p[1], PLAYER2_COLOR)
     game = Game(player1, player2)
     board = Board()
-    scoreboard = Scoreboard(pygame.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE), LIGHT_GRAY, game)
+    scoreboard = Scoreboard(
+        pygame.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE), 
+        LIGHT_GRAY, game
+    )
     footer = Footer(pygame.Rect(cfg.FOOTER_ORIGIN, cfg.FOOTER_SIZE), LIGHT_GRAY)
 
     # Initialize game state
@@ -67,8 +84,14 @@ def play(args, cfg):
     scoreboard.draw()
 
 
+    print(game)
+    print(board)
+    print(scoreboard)
+    print(footer)
+    print(player1)
+    print(player2)
 
-    footer.draw([player1])
+    # footer.draw([player1])
 
 
 
@@ -101,17 +124,27 @@ def play(args, cfg):
                     success = entity.activate()
 
                     if success:
-                        capture1_success = entity.cell1.check_for_capture(current_player) if entity.cell1 else False
-                        capture2_success = entity.cell2.check_for_capture(current_player) if entity.cell2 else False
+                        capture1_success = \
+                            entity.cell1.check_for_capture(current_player) \
+                                if entity.cell1 else False
+
+                        capture2_success = \
+                            entity.cell2.check_for_capture(current_player) \
+                                if entity.cell2 else False
 
                         if not capture1_success and not capture2_success:
                             current_player = game.next_player()
                             scoreboard.set_active_box(current_player)
+
                         else:
-                            if capture1_success: game.increment_score(current_player)
-                            if capture2_success: game.increment_score(current_player)
+                            if capture1_success: 
+                                game.increment_score(current_player)
+                            if capture2_success: 
+                                game.increment_score(current_player)
+
                             scoreboard.update_score(current_player)
                             winner = game.check_for_winner()
+
                             if winner is not None:
                                 footer.draw(winner)
 
@@ -125,6 +158,7 @@ if __name__ == '__main__':
         # Config MUST be initialized here for the singleton to be configured
         # properly for use elsewhere
         config = Config(rows=args.r, cols=args.c, cell_size=(args.w, args.t))
+        print(config)
         play(args, config)
     except Exception as e:
         print()

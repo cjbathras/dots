@@ -6,7 +6,9 @@ from __init__ import *
 
 
 class Entity(pygame.Rect, metaclass=ABCMeta):
-    def __init__(self, origin: tuple, size: tuple, row: int, col: int, bg_color: pygame.Color):
+    def __init__(self, origin: tuple, size: tuple, row: int, col: int, 
+        bg_color: pygame.Color):
+        
         super().__init__(origin, size)
         self.row = row
         self.col = col
@@ -15,9 +17,3 @@ class Entity(pygame.Rect, metaclass=ABCMeta):
 
     @abstractmethod
     def draw(self): pass
-
-    def __str__(self):
-        return f'{self.__class__.__name__} [{self.row},{self.col}] origin={self.topleft} size={self.size}'
-
-    def __repr__(self):
-        return f'{self.__class__.__name__} [{self.row},{self.col}] origin={self.topleft} size={self.size}'
