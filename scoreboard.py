@@ -1,12 +1,14 @@
 import pygame
 
 from __init__ import *
+from game import Game
+from player import Player
 
 GAP = 20
 
 
 class Scoreboard(pygame.Rect):
-    def __init__(self, rect, bg_color, game):
+    def __init__(self, rect: pygame.Rect, bg_color: pygame.Color, game: Game):
         super().__init__(rect)
         self.bg_color = bg_color
         self.arrow = pygame.image.load('left-arrow-24.png')
@@ -74,7 +76,7 @@ class Scoreboard(pygame.Rect):
         self.prev_player = self.game.players[0]
         self.prev_active_box = self.p1_active_box
 
-    def draw(self):
+    def draw(self) -> None:
         pygame.draw.rect(self.screen, self.bg_color, self.p1_obox)
         pygame.draw.rect(self.screen, self.bg_color, self.p1_ibox)
         pygame.draw.rect(self.screen, self.game.players[0].color , self.p1_scorebox)
@@ -95,14 +97,14 @@ class Scoreboard(pygame.Rect):
 
         pygame.display.update(self)
 
-    def set_active_box(self, player):
+    def set_active_box(self, player: Player) -> None:
         self.screen.blit(self.arrow, self.active_boxes[player])
         pygame.draw.rect(self.screen, self.bg_color, self.prev_active_box)
         pygame.display.update(self.active_boxes[player])
         pygame.display.update(self.prev_active_box)
         self.prev_active_box = self.active_boxes[player]
 
-    def update_score(self, player):
+    def update_score(self, player: Player) -> None:
         if player == self.game.players[0]:
             pygame.draw.rect(self.screen, self.game.players[0].color, self.p1_scorebox)
             self.p1_score_text = FONT_LATO_REGULAR_20.render(f'{self.game.get_score(player)}', True, BLACK)

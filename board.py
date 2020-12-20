@@ -6,6 +6,7 @@ from cell import Cell
 from config import Config
 from dot import Dot
 from edge import Edge
+from entity import Entity
 
 
 class Board:
@@ -72,7 +73,7 @@ class Board:
         # of the connection relationships between them.
         self._establish_connections()
 
-    def __getitem__(self, coord):
+    def __getitem__(self, coord: TupleOrInt) -> Entity:
         if coord is None:
             return None
 
@@ -81,7 +82,7 @@ class Board:
         else:
             return self.board[coord]
 
-    def get_row_col(self, pos):
+    def get_row_col(self, pos: tuple) -> tuple:
         x, y = pos
         row, col = None, None
         for c, extents in self.col_extents.items():
@@ -101,7 +102,7 @@ class Board:
 
         return None
 
-    def _establish_connections(self):
+    def _establish_connections(self) -> None:
         for row in self.board:
             for entity in row:
                 r, c = entity.row, entity.col
@@ -130,7 +131,7 @@ class Board:
                         entity.cell1 = self.board[r][c-1]
                         entity.cell2 = self.board[r][c+1]
 
-    def draw(self):
+    def draw(self) -> None:
         for r in range(0, len(self.board)):
             for c in range(0, len(self.board[0])):
                 self.board[r][c].draw()

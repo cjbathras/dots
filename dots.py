@@ -44,37 +44,37 @@ def play(args, cfg):
     # Initialize pygame
     pygame.display.init()
     pygame.display.set_caption('Dots')
-
-    # Create the game screen and initialize the size
     screen = pygame.display.set_mode((
         cfg.COLS * cfg.CELL_WIDTH + (cfg.COLS + 1) * cfg.EDGE_THICKNESS + cfg.GUTTER_LEFT + cfg.GUTTER_RIGHT,
         cfg.ROWS * cfg.CELL_HEIGHT + (cfg.ROWS + 1) * cfg.EDGE_THICKNESS + cfg.GUTTER_TOP * 2 + cfg.SCOREBOARD_HEIGHT + cfg.GUTTER_BOTTOM * 2 + cfg.FOOTER_HEIGHT
     ))
-    screen.fill(WHITE)
 
-    # Create the players
+    # Create the static components
     player1 = Player(args.p[0], PLAYER1_COLOR)
     player2 = Player(args.p[1], PLAYER2_COLOR)
-
-    # Create the game
     game = Game(player1, player2)
-    current_player = game.current_player()
-
-    # Create the board
     board = Board()
-    board.draw()
-
-    # Create the scoreboard
     scoreboard = Scoreboard(pygame.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE), LIGHT_GRAY, game)
-    scoreboard.draw()
-
-    # Create the footer
     footer = Footer(pygame.Rect(cfg.FOOTER_ORIGIN, cfg.FOOTER_SIZE), LIGHT_GRAY)
 
+    # Initialize game state
+    current_player = game.current_player()
     highlighted_edge = None
+
+    # Draw the components
+    screen.fill(BACKGROUND_COLOR)
+    board.draw()
+    scoreboard.draw()
+
+
+
+    footer.draw([player1])
+
+
 
     # Game play loop
     while True:
+        # Iterate through all of the current events in the event queue
         for event in pygame.event.get():
 
             if event.type == QUIT:
@@ -116,7 +116,7 @@ def play(args, cfg):
                                 footer.draw(winner)
 
         # Very brief sleep so the process doesn't peg the CPU
-        time.sleep(0.001)
+        # time.sleep(0.001)
 
 
 if __name__ == '__main__':

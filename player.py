@@ -1,5 +1,8 @@
+import pygame
+
+
 class Player:
-    def __init__(self, name, color):
+    def __init__(self, name: str, color: pygame.Color):
         super().__init__()
         self.name = name
         self.color = color

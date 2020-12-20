@@ -1,9 +1,10 @@
 from __init__ import *
 from config import Config
+from player import Player
 
 
 class Game:
-    def __init__(self, *players):
+    def __init__(self, *players: list[Player]):
         super().__init__()
         self.cfg = Config()
         self.players = list(players)
@@ -12,21 +13,21 @@ class Game:
         self.tgt_total = self.cfg.ROWS * self.cfg.COLS
         self.total = 0
 
-    def next_player(self):
+    def next_player(self) -> Player:
         self.player_ptr = (self.player_ptr + 1) % len(self.players)
         return self.current_player()
 
-    def current_player(self):
+    def current_player(self) -> Player:
         return self.players[self.player_ptr]
 
-    def increment_score(self, player):
+    def increment_score(self, player: Player) -> None:
         self.scores[player] += 1
         self.total += 1
 
-    def get_score(self, player):
+    def get_score(self, player: Player) -> int:
         return self.scores[player]
 
-    def check_for_winner(self):
+    def check_for_winner(self) -> list[Player]:
         if self.total == self.tgt_total:
             # Create a reverse sorted list of (player, score) tuples
             sorted_scores = [(k, v) for k, v in reversed(sorted(self.scores.items(), key=lambda item: item[1]))]
