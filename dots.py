@@ -1,10 +1,10 @@
 import argparse
 import sys
-import time
 import traceback
 
-import pygame
+import pygame as pg
 from pygame.locals import QUIT
+from pygame.locals import MOUSEBUTTONDOWN
 from pygame.locals import MOUSEBUTTONUP
 from pygame.locals import MOUSEMOTION
 
@@ -19,6 +19,8 @@ from edge import Edge
 from game import Game
 from player import Player
 from scoreboard import Scoreboard
+
+clock = pg.time.Clock()
 
 DESCRIPTION="""
 A simple game of trying to capture as many cells as you can by connecting
@@ -35,69 +37,89 @@ def parse_args():
     parser.add_argument('-c', metavar='COLUMNS', default='4', type=int,
         help='number of columns of cells (default: 4)')
 
-    parser.add_argument('-w', metavar='CELL_WIDTH', default='100', type=int, 
+    parser.add_argument('-w', metavar='CELL_WIDTH', default='100', type=int,
         help='width of cells (default: 100 pixels)')
 
     parser.add_argument('-t', metavar='CELL_HEIGHT', default='100', type=int,
         help='height of cells (default: 100 pixels)')
 
-    parser.add_argument('-p', metavar='PLAYER', default=['Alice', 'Bob'], 
+    parser.add_argument('-p', metavar='PLAYER', default=['Alice', 'Bob'],
         nargs=2, help='names of the two players (default: Alice Bob)')
 
     args = parser.parse_args()
     return args
 
 
+class Dots:
+    def __init__(self, screen):
+        self._done = False
+        self._clock = pg.time.Clock()
+        self._screen = screen
+
+    def quit(self):
+        self._done = True
+
+    def run(self):
+        while not self._done:
+            self._dt = self._clock.tick(30) / 1000
+            self.handle_events()
+            self.run_logic()
+            self.draw()
+
+    def handle_events(self):
+        for event in pg.event.get():
+
+            if event.type == pg.QUIT:
+                self._done = True
+
+            for sprite in self._all_sprites:
+                sprite.handle_event(event)
+
+    def run_logic(self):
+        self._all_sprites.update(self._dt)
+
+    def draw(self):
+        self._all_sprites.draw(self._screen)
+        pg.display.flip()
+
+    def add_sprite(self, spr):
+        self._all_sprites.add(spr)
+
 def play(args, cfg):
-    # Initialize pygame
-    pygame.display.init()
-    pygame.display.set_caption('Dots')
-    screen = pygame.display.set_mode((
-        cfg.COLS * cfg.CELL_WIDTH 
-        + (cfg.COLS + 1) * cfg.EDGE_THICKNESS 
-        + cfg.GUTTER_LEFT 
-        + cfg.GUTTER_RIGHT,
-
-        cfg.ROWS * cfg.CELL_HEIGHT 
-        + (cfg.ROWS + 1) * cfg.EDGE_THICKNESS 
-        + cfg.GUTTER_TOP * 2 
-        + cfg.SCOREBOARD_HEIGHT 
-        + cfg.GUTTER_BOTTOM * 2 
-        + cfg.BANNER_HEIGHT
-    ))
-
     # Create the static components
     player1 = Player(args.p[0], PLAYER1_COLOR)
     player2 = Player(args.p[1], PLAYER2_COLOR)
-    game = Game(player1, player2)
+    game = Game([player1, player2])
     board = Board()
     scoreboard = Scoreboard(
-        pygame.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE), 
+        pg.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE),
         LIGHT_GRAY, game
     )
-    banner = Banner(pygame.Rect(cfg.BANNER_ORIGIN, cfg.BANNER_SIZE), LIGHT_GRAY)
+    banner = Banner(pg.Rect(cfg.BANNER_ORIGIN, cfg.BANNER_SIZE), LIGHT_GRAY)
     play_again_button = Button('Play Again?')
     play_again_button.center = \
-        (pygame.display.get_surface().get_width() // 2,
-        pygame.display.get_surface().get_height() \
+        (pg.display.get_surface().get_width() // 2,
+        pg.display.get_surface().get_height() \
         - play_again_button.height - 20)
+    play_again_button.visible = False
 
     # Initialize game state
     current_player = game.current_player()
     highlighted_edge = None
 
     # Draw the components
-    screen.fill(BACKGROUND_COLOR)
     board.draw()
     scoreboard.draw()
+
+    buttons = [play_again_button]
 
     # Game play loop
     while True:
         # Iterate through all of the current events in the event queue
-        for event in pygame.event.get():
+        for event in pg.event.get():
 
             if event.type == QUIT:
-                pygame.quit()
+                pg.quit()
                 sys.exit()
 
             elif event.type == MOUSEMOTION:
@@ -110,8 +132,13 @@ def play(args, cfg):
                     if highlighted_edge:
                         highlighted_edge.clear()
 
-                if game.is_over and play_again_button.collidepoint(event.pos):
-                    play_again_button.mouse_hover()
+                for b in buttons:
+                    b.on_mouse_enter(event.pos)
+                    b.on_mouse_leave(event.pos)
+
+            elif event.type == MOUSEBUTTONDOWN:
+                for b in buttons:
+                    b.on_mouse_down(event.pos)
 
             elif event.type == MOUSEBUTTONUP:
                 location = board.get_row_col(event.pos)
@@ -134,9 +161,9 @@ def play(args, cfg):
                             scoreboard.set_active_box(current_player)
 
                         else:
-                            if cell1_captured: 
+                            if cell1_captured:
                                 game.increment_score(current_player)
-                            if cell2_captured: 
+                            if cell2_captured:
                                 game.increment_score(current_player)
 
                             scoreboard.update_score(current_player)
@@ -144,10 +171,15 @@ def play(args, cfg):
 
                             if winner is not None:
                                 banner.draw(winner)
+                                play_again_button.visible = True
                                 play_again_button.draw()
 
+                for b in buttons:
+                    b.on_mouse_up(event.pos)
+                    banner.clear()
+
         # Very brief sleep so the process doesn't peg the CPU
-        # time.sleep(0.001)
+        clock.tick(30)
 
 
 if __name__ == '__main__':
@@ -156,10 +188,32 @@ if __name__ == '__main__':
         # Config MUST be initialized here for the singleton to be configured
         # properly for use elsewhere
         config = Config(rows=args.r, cols=args.c, cell_size=(args.w, args.t))
+
+        # Initialize pygame
+        pg.display.init()
+        pg.display.set_caption('Dots')
+        screen = pg.display.set_mode((
+            cfg.COLS * cfg.CELL_WIDTH
+            + (cfg.COLS + 1) * cfg.EDGE_THICKNESS
+            + cfg.GUTTER_LEFT
+            + cfg.GUTTER_RIGHT,
+
+            cfg.ROWS * cfg.CELL_HEIGHT
+            + (cfg.ROWS + 1) * cfg.EDGE_THICKNESS
+            + cfg.GUTTER_TOP * 2
+            + cfg.SCOREBOARD_HEIGHT
+            + cfg.GUTTER_BOTTOM * 2
+            + cfg.BANNER_HEIGHT
+        ))
+        screen.fill(BACKGROUND_COLOR)
+        pg.display.update()
+
+        dots = Dots(screen)
+
         play(args, config)
     except Exception as e:
         print()
         print(traceback.format_exc())
         parser.print_usage()
     finally:
-        pygame.quit()
+        pg.quit()

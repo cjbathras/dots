@@ -1,13 +1,13 @@
-import pygame
+import pygame as pg
 
 from __init__ import *
 from singleton import Singleton
 
 
 class Config(metaclass=Singleton):
-    def __init__(self, rows: int=5, cols: int=5, cell_size: tuple=(100, 100), 
-        dot_radius: int=5, gutter_top: int=20, gutter_bottom: int=20, 
-        gutter_left: int=20, gutter_right: int=20, scoreboard_height: int=70, 
+    def __init__(self, rows: int=5, cols: int=5, cell_size: tuple=(100, 100),
+        dot_radius: int=5, gutter_top: int=20, gutter_bottom: int=20,
+        gutter_left: int=20, gutter_right: int=20, scoreboard_height: int=70,
         banner_height: int=70):
         # Anything that should be gettable/settable should be defined here
         # Anything that should only be gettable because it depends on another
@@ -21,18 +21,18 @@ class Config(metaclass=Singleton):
         """2D size of a cell in pixels"""
         self.CELL_SIZE: tuple = cell_size
         """Default background color of a cell"""
-        self.CELL_COLOR_DEFAULT: pygame.Color = WHITE
+        self.CELL_COLOR_DEFAULT: pg.Color = WHITE
 
         """Radius of a dot"""
         self.DOT_RAD: int = dot_radius
         """Color of a dot"""
-        self.DOT_COLOR: pygame.Color = BLACK
+        self.DOT_COLOR: pg.Color = BLACK
 
         """Default background color of an edge"""
-        self.EDGE_COLOR_DEFAULT: pygame.Color = LIGHT_GRAY
-        """Color of an edge when it has been captured (i.e. clicked on by a 
+        self.EDGE_COLOR_DEFAULT: pg.Color = LIGHT_GRAY
+        """Color of an edge when it has been captured (i.e. clicked on by a
         player)"""
-        self.EDGE_COLOR_ACTIVATED: pygame.Color = pygame.Color(125, 125, 255)
+        self.EDGE_COLOR_ACTIVATED: pg.Color = pg.Color(125, 125, 255)
 
         # Gutter is the empty spacing surrounding the drawn components to offset
         # them from the display window.
@@ -83,12 +83,12 @@ class Config(metaclass=Singleton):
     @property
     def BANNER_ORIGIN(self) -> tuple:
         return (
-            self.GUTTER_LEFT, 
-            
-            self.GUTTER_TOP * 2 
-            + self.SCOREBOARD_HEIGHT 
-            + self.ROWS * self.CELL_WIDTH 
-            + (self.ROWS + 1) * self.EDGE_THICKNESS 
+            self.GUTTER_LEFT,
+
+            self.GUTTER_TOP * 2
+            + self.SCOREBOARD_HEIGHT
+            + self.ROWS * self.CELL_WIDTH
+            + (self.ROWS + 1) * self.EDGE_THICKNESS
             + self.GUTTER_BOTTOM
         )
 

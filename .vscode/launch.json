@@ -33,6 +33,14 @@
             "program": "test.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Stub",
+            "type": "python",
+            "request": "launch",
+            "program": "stub.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

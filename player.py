@@ -1,8 +1,8 @@
-import pygame
+import pygame as pg
 
 
 class Player:
-    def __init__(self, name: str, color: pygame.Color):
+    def __init__(self, name: str, color: pg.Color):
         super().__init__()
         self.name = name
         self.color = color

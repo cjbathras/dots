@@ -1,4 +1,4 @@
-import pygame
+import pygame as pg
 
 from __init__ import *
 from config import Config
@@ -6,9 +6,9 @@ from entity import Entity
 
 
 class Edge(Entity):
-    def __init__(self, origin: tuple, size: tuple, row: int, col: int, 
-        bg_color: pygame.Color):
-        
+    def __init__(self, origin: tuple, size: tuple, row: int, col: int,
+        bg_color: pg.Color):
+
         super().__init__(origin, size, row, col, bg_color)
         self.cfg = Config()
         self.is_captured = False
@@ -16,14 +16,14 @@ class Edge(Entity):
         self.cell2 = None
 
     def draw(self) -> None:
-        pygame.draw.rect(self.screen, self.bg_color, self)
-        pygame.display.update(self)
+        pg.draw.rect(self.screen, self.bg_color, self)
+        pg.display.update(self)
 
     def highlight(self) -> None:
         if not self.is_captured:
-            pygame.draw.rect(self.screen, self.cfg.EDGE_COLOR_ACTIVATED, self, 
+            pg.draw.rect(self.screen, self.cfg.EDGE_COLOR_ACTIVATED, self,
                 width=1)
-            pygame.display.update(self)
+            pg.display.update(self)
 
     def clear(self) -> None:
         self.draw()
