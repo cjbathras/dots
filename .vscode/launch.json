@@ -17,7 +17,14 @@
             "request": "launch",
             "program": "dots.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "args": [
+                "-r", "2",
+                "-c", "2",
+                "-w", "200",
+                "-t", "200",
+                "-p", "Alice", "Bob"
+            ]
         },
         {
             "name": "Test",

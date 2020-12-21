@@ -12,6 +12,7 @@ class Game:
         self.scores = {p: 0 for p in self.players}
         self.tgt_total = self.cfg.ROWS * self.cfg.COLS
         self.total = 0
+        self.is_over = False
 
     def next_player(self) -> Player:
         self.player_ptr = (self.player_ptr + 1) % len(self.players)
@@ -29,6 +30,7 @@ class Game:
 
     def check_for_winner(self) -> list[Player]:
         if self.total == self.tgt_total:
+            self.is_over = True
             # Create a reverse sorted list of (player, score) tuples
             sorted_scores = [(k, v) for k, v \
                 in reversed(

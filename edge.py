@@ -11,7 +11,7 @@ class Edge(Entity):
         
         super().__init__(origin, size, row, col, bg_color)
         self.cfg = Config()
-        self.is_activated = False
+        self.is_captured = False
         self.cell1 = None
         self.cell2 = None
 
@@ -20,7 +20,7 @@ class Edge(Entity):
         pygame.display.update(self)
 
     def highlight(self) -> None:
-        if not self.is_activated:
+        if not self.is_captured:
             pygame.draw.rect(self.screen, self.cfg.EDGE_COLOR_ACTIVATED, self, 
                 width=1)
             pygame.display.update(self)
@@ -28,9 +28,9 @@ class Edge(Entity):
     def clear(self) -> None:
         self.draw()
 
-    def activate(self) -> None:
-        if not self.is_activated:
-            self.is_activated = True
+    def capture(self) -> None:
+        if not self.is_captured:
+            self.is_captured = True
             self.bg_color = self.cfg.EDGE_COLOR_ACTIVATED
             self.draw()
             return True

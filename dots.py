@@ -4,15 +4,18 @@ import time
 import traceback
 
 import pygame
-from pygame.locals import *
+from pygame.locals import QUIT
+from pygame.locals import MOUSEBUTTONUP
+from pygame.locals import MOUSEMOTION
 
 from __init__ import *
+from banner import Banner
 from board import Board
+from button import Button
 from cell import Cell
 from config import Config
 from dot import Dot
 from edge import Edge
-from footer import Footer
 from game import Game
 from player import Player
 from scoreboard import Scoreboard
@@ -60,7 +63,7 @@ def play(args, cfg):
         + cfg.GUTTER_TOP * 2 
         + cfg.SCOREBOARD_HEIGHT 
         + cfg.GUTTER_BOTTOM * 2 
-        + cfg.FOOTER_HEIGHT
+        + cfg.BANNER_HEIGHT
     ))
 
     # Create the static components
@@ -72,7 +75,12 @@ def play(args, cfg):
         pygame.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE), 
         LIGHT_GRAY, game
     )
-    footer = Footer(pygame.Rect(cfg.FOOTER_ORIGIN, cfg.FOOTER_SIZE), LIGHT_GRAY)
+    banner = Banner(pygame.Rect(cfg.BANNER_ORIGIN, cfg.BANNER_SIZE), LIGHT_GRAY)
+    play_again_button = Button('Play Again?')
+    play_again_button.center = \
+        (pygame.display.get_surface().get_width() // 2,
+        pygame.display.get_surface().get_height() \
+        - play_again_button.height - 20)
 
     # Initialize game state
     current_player = game.current_player()
@@ -83,18 +91,6 @@ def play(args, cfg):
     board.draw()
     scoreboard.draw()
 
-
-    print(game)
-    print(board)
-    print(scoreboard)
-    print(footer)
-    print(player1)
-    print(player2)
-
-    # footer.draw([player1])
-
-
-
     # Game play loop
     while True:
         # Iterate through all of the current events in the event queue
@@ -104,49 +100,51 @@ def play(args, cfg):
                 pygame.quit()
                 sys.exit()
 
-            elif event.type == pygame.MOUSEMOTION:
-                mouse_pos = mouse_x, mouse_y = pygame.mouse.get_pos()
-                location = board.get_row_col(mouse_pos)
+            elif event.type == MOUSEMOTION:
+                location = board.get_row_col(event.pos)
                 entity = board[location]
-                if isinstance(entity, Edge):
+                if isinstance(entity, Edge) and not game.is_over:
                     entity.highlight()
                     highlighted_edge = entity
                 else:
                     if highlighted_edge:
                         highlighted_edge.clear()
 
-            elif event.type == pygame.MOUSEBUTTONUP:
-                mouse_pos = mouse_x, mouse_y = pygame.mouse.get_pos()
-                location = board.get_row_col(mouse_pos)
+                if game.is_over and play_again_button.collidepoint(event.pos):
+                    play_again_button.mouse_hover()
+
+            elif event.type == MOUSEBUTTONUP:
+                location = board.get_row_col(event.pos)
                 entity = board[location]
 
                 if isinstance(entity, Edge):
-                    success = entity.activate()
+                    edge_captured = entity.capture()
 
-                    if success:
-                        capture1_success = \
+                    if edge_captured:
+                        cell1_captured = \
                             entity.cell1.check_for_capture(current_player) \
                                 if entity.cell1 else False
 
-                        capture2_success = \
+                        cell2_captured = \
                             entity.cell2.check_for_capture(current_player) \
                                 if entity.cell2 else False
 
-                        if not capture1_success and not capture2_success:
+                        if not cell1_captured and not cell2_captured:
                             current_player = game.next_player()
                             scoreboard.set_active_box(current_player)
 
                         else:
-                            if capture1_success: 
+                            if cell1_captured: 
                                 game.increment_score(current_player)
-                            if capture2_success: 
+                            if cell2_captured: 
                                 game.increment_score(current_player)
 
                             scoreboard.update_score(current_player)
                             winner = game.check_for_winner()
 
                             if winner is not None:
-                                footer.draw(winner)
+                                banner.draw(winner)
+                                play_again_button.draw()
 
         # Very brief sleep so the process doesn't peg the CPU
         # time.sleep(0.001)
@@ -158,7 +156,6 @@ if __name__ == '__main__':
         # Config MUST be initialized here for the singleton to be configured
         # properly for use elsewhere
         config = Config(rows=args.r, cols=args.c, cell_size=(args.w, args.t))
-        print(config)
         play(args, config)
     except Exception as e:
         print()

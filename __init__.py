@@ -27,6 +27,7 @@ BACKGROUND_COLOR = WHITE
 # You MUST call font.init() before loading any fonts
 pygame.font.init()
 FONT_LATO_REGULAR_20 = pygame.font.Font('fonts/Lato-Regular.ttf', 20)
+FONT_LATO_REGULAR_14 = pygame.font.Font('fonts/Lato-Regular.ttf', 14)
 FONT_LATO_LIGHT_12 = pygame.font.Font('fonts/Lato-Light.ttf', 12)
 FONT_LATO_LIGHT_14 = pygame.font.Font('fonts/Lato-Light.ttf', 14)
 FONT_DEFAULT = pygame.font.Font(None, 18)

@@ -22,8 +22,8 @@ class Cell(Entity):
         pygame.display.update(self)
 
     def check_for_capture(self, player: Player) -> bool:
-        if self.edge_top.is_activated and self.edge_bottom.is_activated \
-            and self.edge_left.is_activated and self.edge_right.is_activated:
+        if self.edge_top.is_captured and self.edge_bottom.is_captured \
+            and self.edge_left.is_captured and self.edge_right.is_captured:
             
             self.is_captured = True
             self.captured_by = player

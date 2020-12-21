@@ -8,7 +8,7 @@ class Config(metaclass=Singleton):
     def __init__(self, rows: int=5, cols: int=5, cell_size: tuple=(100, 100), 
         dot_radius: int=5, gutter_top: int=20, gutter_bottom: int=20, 
         gutter_left: int=20, gutter_right: int=20, scoreboard_height: int=70, 
-        footer_height: int=70):
+        banner_height: int=70):
         # Anything that should be gettable/settable should be defined here
         # Anything that should only be gettable because it depends on another
         # value, should be defined with the @property decorator
@@ -30,7 +30,7 @@ class Config(metaclass=Singleton):
 
         """Default background color of an edge"""
         self.EDGE_COLOR_DEFAULT: pygame.Color = LIGHT_GRAY
-        """Color of an edge when it has been activated (i.e. clicked on by a 
+        """Color of an edge when it has been captured (i.e. clicked on by a 
         player)"""
         self.EDGE_COLOR_ACTIVATED: pygame.Color = pygame.Color(125, 125, 255)
 
@@ -48,8 +48,8 @@ class Config(metaclass=Singleton):
         """Height of the scoreboard, in pixels"""
         self.SCOREBOARD_HEIGHT: int = scoreboard_height
 
-        """Height of the footer, in pixels"""
-        self.FOOTER_HEIGHT: int = footer_height
+        """Height of the banner, in pixels"""
+        self.BANNER_HEIGHT: int = banner_height
 
     @property
     def DOT_DIA(self) -> int:
@@ -81,7 +81,7 @@ class Config(metaclass=Singleton):
         return (self.SCOREBOARD_WIDTH, self.SCOREBOARD_HEIGHT)
 
     @property
-    def FOOTER_ORIGIN(self) -> tuple:
+    def BANNER_ORIGIN(self) -> tuple:
         return (
             self.GUTTER_LEFT, 
             
@@ -93,12 +93,12 @@ class Config(metaclass=Singleton):
         )
 
     @property
-    def FOOTER_WIDTH(self) -> int:
-        return self.SCOREBOARD_WIDTH
+    def BANNER_WIDTH(self) -> int:
+        return self.SCOREBOARD_WIDTH - 60
 
     @property
-    def FOOTER_SIZE(self) -> tuple:
-        return (self.FOOTER_WIDTH, self.FOOTER_HEIGHT)
+    def BANNER_SIZE(self) -> tuple:
+        return (self.BANNER_WIDTH, self.BANNER_HEIGHT)
 
     def __str__(self) -> str:
         return \
@@ -111,7 +111,7 @@ class Config(metaclass=Singleton):
             f'  dot_color={self.DOT_COLOR}\n' \
             f'  edge_thickness={self.EDGE_THICKNESS}\n' \
             f'  edge_color_default={self.EDGE_COLOR_DEFAULT}\n' \
-            f'  edge_color_activated={self.EDGE_COLOR_ACTIVATED}\n' \
+            f'  edge_color_captured={self.EDGE_COLOR_ACTIVATED}\n' \
             f'  gutter_top={self.GUTTER_TOP}\n' \
             f'  gutter_bottom={self.GUTTER_BOTTOM}\n'\
             f'  gutter_left={self.GUTTER_LEFT}\n' \
@@ -120,10 +120,10 @@ class Config(metaclass=Singleton):
             f'  scoreboard_size={self.SCOREBOARD_SIZE}\n' \
             f'  scoreboard_width={self.SCOREBOARD_WIDTH}\n' \
             f'  scoreboard_height={self.SCOREBOARD_HEIGHT}\n' \
-            f'  footer_origin={self.FOOTER_ORIGIN}\n' \
-            f'  footer_size={self.FOOTER_SIZE}\n' \
-            f'  footer_width={self.FOOTER_WIDTH}\n' \
-            f'  footer_height={self.FOOTER_HEIGHT}'
+            f'  banner_origin={self.BANNER_ORIGIN}\n' \
+            f'  banner_size={self.BANNER_SIZE}\n' \
+            f'  banner_width={self.BANNER_WIDTH}\n' \
+            f'  banner_height={self.BANNER_HEIGHT}'
 
     def __repr__(self) -> str:
         return f'{type(self).__name__}'

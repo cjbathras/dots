@@ -170,8 +170,6 @@ class Board:
                         entity.cell1 = self.board[r][c-1]
                         entity.cell2 = self.board[r][c+1]
                 
-                print(entity)
-
     def draw(self) -> None:
         for r in range(0, len(self.board)):
             for c in range(0, len(self.board[0])):
