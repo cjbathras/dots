@@ -19,9 +19,9 @@ RED              = pg.Color(255, 0, 0)
 WHITE            = pg.Color(255, 255, 255)
 YELLOW           = pg.Color(255, 255, 0)
 
-BUTTON_COLOR       = pg.Color(125, 125, 255)
-BUTTON_COLOR_HOVER = pg.Color(150, 150, 255)
-BUTTON_COLOR_DOWN  = pg.Color(100, 100, 255)
+BUTTON_COLOR       = pg.Color(76, 97, 237)
+BUTTON_COLOR_HOVER = pg.Color(120, 136, 242)
+BUTTON_COLOR_DOWN  = pg.Color(28, 55, 233)
 PLAYER1_COLOR      = pg.Color(107, 209, 129)
 PLAYER2_COLOR      = pg.Color(204, 151, 222)
 

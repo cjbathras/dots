@@ -14,16 +14,8 @@ pg.display.update()
 
 
 button1 = Button((10, 10), (50, 30), text='foo')
-button1.draw()
-
 button2 = Button((10, 100), (50, 30), text='bar')
-button2.draw()
-
-button3 = Button((10, 200), (50, 30), text='baz')
-button3.draw()
-
-
-buttons = [button1, button2, button3]
+buttons = [button1, button2]
 
 
 
@@ -36,3 +28,14 @@ while run:
         elif event.type == pg.MOUSEMOTION:
             for b in buttons:
                 b.handle_event(event)
+                b.draw()
+
+        elif event.type == pg.MOUSEBUTTONDOWN:
+            for b in buttons:
+                b.handle_event(event)
+                b.draw()
+
+        elif event.type == pg.MOUSEBUTTONUP:
+            for b in buttons:
+                b.handle_event(event)
+                b.draw()
