@@ -1,10 +1,13 @@
 import pygame as pg
 from typing import TypeVar
 
+from pygame.surfarray import array_colorkey
+
 TupleOrInt = TypeVar('TupleOrInt', tuple, int)
 
 # Color definitions
-BLACK            = pg.Color(0, 0, 0)
+COLORKEY         = pg.Color(0, 0, 0) # Colorkey is used for transparency (any pixel with this color will not be drawn on blit)
+BLACK            = pg.Color(1, 1, 1)
 BLUE             = pg.Color(0, 0, 255)
 CYAN             = pg.Color(0, 255, 255)
 DARK_GRAY        = pg.Color(64, 64, 64)

@@ -3,10 +3,10 @@ import sys
 import traceback
 
 import pygame as pg
-from pygame.locals import QUIT
-from pygame.locals import MOUSEBUTTONDOWN
-from pygame.locals import MOUSEBUTTONUP
-from pygame.locals import MOUSEMOTION
+# from pygame.locals import QUIT
+# from pygame.locals import MOUSEBUTTONDOWN
+# from pygame.locals import MOUSEBUTTONUP
+# from pygame.locals import MOUSEMOTION
 
 from __init__ import *
 from banner import Banner
@@ -55,11 +55,13 @@ class Dots:
         self._done = False
         self._clock = pg.time.Clock()
         self._screen = screen
+        self._all_sprites = pg.sprite.Group()
 
     def quit(self):
         self._done = True
 
     def run(self):
+        # Game play loop
         while not self._done:
             self._dt = self._clock.tick(30) / 1000
             self.handle_events()
@@ -85,135 +87,137 @@ class Dots:
     def add_sprite(self, spr):
         self._all_sprites.add(spr)
 
-def play(args, cfg):
-    # Create the static components
-    player1 = Player(args.p[0], PLAYER1_COLOR)
-    player2 = Player(args.p[1], PLAYER2_COLOR)
-    game = Game([player1, player2])
-    board = Board()
-    scoreboard = Scoreboard(
-        pg.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE),
-        LIGHT_GRAY, game
-    )
-    banner = Banner(pg.Rect(cfg.BANNER_ORIGIN, cfg.BANNER_SIZE), LIGHT_GRAY)
-    play_again_button = Button('Play Again?')
-    play_again_button.center = \
-        (pg.display.get_surface().get_width() // 2,
-        pg.display.get_surface().get_height() \
-        - play_again_button.height - 20)
-    play_again_button.visible = False
+# def play(args, cfg):
+#     # Create the static components
+#     player1 = Player(args.p[0], PLAYER1_COLOR)
+#     player2 = Player(args.p[1], PLAYER2_COLOR)
+#     game = Game([player1, player2])
+#     board = Board()
+#     scoreboard = Scoreboard(
+#         pg.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE),
+#         LIGHT_GRAY, game
+#     )
+#     banner = Banner(pg.Rect(cfg.BANNER_ORIGIN, cfg.BANNER_SIZE), LIGHT_GRAY)
+#     play_again_button = Button('Play Again?')
+#     play_again_button.center = \
+#         (pg.display.get_surface().get_width() // 2,
+#         pg.display.get_surface().get_height() \
+#         - play_again_button.height - 20)
+#     play_again_button.visible = False
 
-    # Initialize game state
-    current_player = game.current_player()
-    highlighted_edge = None
+#     # Initialize game state
+#     current_player = game.current_player()
+#     highlighted_edge = None
 
-    # Draw the components
-    board.draw()
-    scoreboard.draw()
+#     # Draw the components
+#     board.draw()
+#     scoreboard.draw()
 
-    buttons = [play_again_button]
+#     buttons = [play_again_button]
 
-    # Game play loop
-    while True:
-        # Iterate through all of the current events in the event queue
-        for event in pg.event.get():
+#     # Game play loop
+#     while True:
+#         # Iterate through all of the current events in the event queue
+#         for event in pg.event.get():
 
-            if event.type == QUIT:
-                pg.quit()
-                sys.exit()
+#             if event.type == QUIT:
+#                 pg.quit()
+#                 sys.exit()
 
-            elif event.type == MOUSEMOTION:
-                location = board.get_row_col(event.pos)
-                entity = board[location]
-                if isinstance(entity, Edge) and not game.is_over:
-                    entity.highlight()
-                    highlighted_edge = entity
-                else:
-                    if highlighted_edge:
-                        highlighted_edge.clear()
+#             elif event.type == MOUSEMOTION:
+#                 location = board.get_row_col(event.pos)
+#                 entity = board[location]
+#                 if isinstance(entity, Edge) and not game.is_over:
+#                     entity.highlight()
+#                     highlighted_edge = entity
+#                 else:
+#                     if highlighted_edge:
+#                         highlighted_edge.clear()
 
-                for b in buttons:
-                    b.on_mouse_enter(event.pos)
-                    b.on_mouse_leave(event.pos)
+#                 for b in buttons:
+#                     b.on_mouse_enter(event.pos)
+#                     b.on_mouse_leave(event.pos)
 
-            elif event.type == MOUSEBUTTONDOWN:
-                for b in buttons:
-                    b.on_mouse_down(event.pos)
+#             elif event.type == MOUSEBUTTONDOWN:
+#                 for b in buttons:
+#                     b.on_mouse_down(event.pos)
 
-            elif event.type == MOUSEBUTTONUP:
-                location = board.get_row_col(event.pos)
-                entity = board[location]
+#             elif event.type == MOUSEBUTTONUP:
+#                 location = board.get_row_col(event.pos)
+#                 entity = board[location]
 
-                if isinstance(entity, Edge):
-                    edge_captured = entity.capture()
+#                 if isinstance(entity, Edge):
+#                     edge_captured = entity.capture()
 
-                    if edge_captured:
-                        cell1_captured = \
-                            entity.cell1.check_for_capture(current_player) \
-                                if entity.cell1 else False
+#                     if edge_captured:
+#                         cell1_captured = \
+#                             entity.cell1.check_for_capture(current_player) \
+#                                 if entity.cell1 else False
 
-                        cell2_captured = \
-                            entity.cell2.check_for_capture(current_player) \
-                                if entity.cell2 else False
+#                         cell2_captured = \
+#                             entity.cell2.check_for_capture(current_player) \
+#                                 if entity.cell2 else False
 
-                        if not cell1_captured and not cell2_captured:
-                            current_player = game.next_player()
-                            scoreboard.set_active_box(current_player)
+#                         if not cell1_captured and not cell2_captured:
+#                             current_player = game.next_player()
+#                             scoreboard.set_active_box(current_player)
 
-                        else:
-                            if cell1_captured:
-                                game.increment_score(current_player)
-                            if cell2_captured:
-                                game.increment_score(current_player)
+#                         else:
+#                             if cell1_captured:
+#                                 game.increment_score(current_player)
+#                             if cell2_captured:
+#                                 game.increment_score(current_player)
 
-                            scoreboard.update_score(current_player)
-                            winner = game.check_for_winner()
+#                             scoreboard.update_score(current_player)
+#                             winner = game.check_for_winner()
 
-                            if winner is not None:
-                                banner.draw(winner)
-                                play_again_button.visible = True
-                                play_again_button.draw()
+#                             if winner is not None:
+#                                 banner.draw(winner)
+#                                 play_again_button.visible = True
+#                                 play_again_button.draw()
 
-                for b in buttons:
-                    b.on_mouse_up(event.pos)
-                    banner.clear()
+#                 for b in buttons:
+#                     b.on_mouse_up(event.pos)
+#                     banner.clear()
 
-        # Very brief sleep so the process doesn't peg the CPU
-        clock.tick(30)
+#         # Very brief sleep so the process doesn't peg the CPU
+#         clock.tick(30)
 
 
 if __name__ == '__main__':
     try:
         args = parse_args()
+        pg.display.init()
+        pg.display.set_caption('Dots')
+
         # Config MUST be initialized here for the singleton to be configured
         # properly for use elsewhere
         config = Config(rows=args.r, cols=args.c, cell_size=(args.w, args.t))
 
         # Initialize pygame
-        pg.display.init()
-        pg.display.set_caption('Dots')
         screen = pg.display.set_mode((
-            cfg.COLS * cfg.CELL_WIDTH
-            + (cfg.COLS + 1) * cfg.EDGE_THICKNESS
-            + cfg.GUTTER_LEFT
-            + cfg.GUTTER_RIGHT,
+            config.COLS * config.CELL_WIDTH
+            + (config.COLS + 1) * config.EDGE_THICKNESS
+            + config.GUTTER_LEFT
+            + config.GUTTER_RIGHT,
 
-            cfg.ROWS * cfg.CELL_HEIGHT
-            + (cfg.ROWS + 1) * cfg.EDGE_THICKNESS
-            + cfg.GUTTER_TOP * 2
-            + cfg.SCOREBOARD_HEIGHT
-            + cfg.GUTTER_BOTTOM * 2
-            + cfg.BANNER_HEIGHT
+            config.ROWS * config.CELL_HEIGHT
+            + (config.ROWS + 1) * config.EDGE_THICKNESS
+            + config.GUTTER_TOP * 2
+            + config.SCOREBOARD_HEIGHT
+            + config.GUTTER_BOTTOM * 2
+            + config.BANNER_HEIGHT
         ))
         screen.fill(BACKGROUND_COLOR)
         pg.display.update()
 
         dots = Dots(screen)
+        dots.run()
 
-        play(args, config)
     except Exception as e:
         print()
         print(traceback.format_exc())
         parser.print_usage()
+
     finally:
         pg.quit()

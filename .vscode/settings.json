@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/home/cbathras/.virtualenvs/pygame/bin/python",
+    "python.pythonPath": "/Users/cjbathras/.virtualenvs/dots/bin/python",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
 }
