@@ -12,9 +12,11 @@ screen.fill(WHITE)
 pg.display.update()
 
 
+def foobar():
+    print(f'this is the callback')
 
-button1 = Button((10, 10), (50, 30), text='foo')
-button2 = Button((10, 100), (50, 30), text='bar')
+button1 = Button((10, 10), (50, 30), text='foo', callback=foobar)
+button2 = Button((10, 100), (50, 30), text='bar', callback=foobar)
 buttons = [button1, button2]
 
 
