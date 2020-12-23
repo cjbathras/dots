@@ -18,6 +18,10 @@ class Game:
     def is_over(self) -> bool:
         return self._is_over
 
+    @property
+    def players(self) -> list[Player]:
+        return self._players
+
     def next_player(self) -> Player:
         self._player_ptr = (self._player_ptr + 1) % len(self._players)
         return self.current_player()

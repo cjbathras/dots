@@ -1,7 +1,7 @@
 import pygame as pg
 from pygame.locals import *
 from __init__ import *
-from button2 import Button
+from button import Button
 
 pg.display.init()
 pg.display.set_caption('Test')

@@ -44,18 +44,38 @@ def parse_args():
         help='height of cells (default: 100 pixels)')
 
     parser.add_argument('-p', metavar='PLAYER', default=['Alice', 'Bob'],
-        nargs=2, help='names of the two players (default: Alice Bob)')
+        nargs=2, help='names of the two - four players (default: Alice Bob)')
 
     args = parser.parse_args()
     return args
 
 
 class Dots:
-    def __init__(self, screen):
+    def __init__(self, screen, args):
         self._done = False
         self._clock = pg.time.Clock()
         self._screen = screen
-        self._all_sprites = pg.sprite.Group()
+        self._cfg = Config()
+
+        screen_rect = self._screen.get_rect()
+
+        # Create the static components
+        if 1 < len(args.p) < 5:
+            self._players = [Player(p, get_color()) for p in args.p]
+        else:
+            raise Exception('Only two to four players are allowed')
+
+        self._game = Game(self._players)
+        # self._board = Board()
+        self._scoreboard = Scoreboard(self._cfg.SCOREBOARD_ORIGIN, 
+            self._cfg.SCOREBOARD_SIZE, LIGHT_GRAY, self._game)
+        self._scoreboard.draw()
+        # self._banner = Banner(pg.Rect(self._cfg.BANNER_ORIGIN, self._cfg.BANNER_SIZE), LIGHT_GRAY)
+
+        self._play_again_button = Button(
+            (screen_rect.width // 2 - 50, screen_rect.height - 50), (100, 35), 
+            text='Play Again?', visible=False)
+        self._play_again_button.draw()
 
     def quit(self):
         self._done = True
@@ -74,18 +94,20 @@ class Dots:
             if event.type == pg.QUIT:
                 self._done = True
 
-            for sprite in self._all_sprites:
-                sprite.handle_event(event)
+            self._play_again_button.handle_event(event)
+            self._play_again_button.draw()
+
+            # for sprite in self._all_sprites:
+            #     sprite.handle_event(event)
 
     def run_logic(self):
-        self._all_sprites.update(self._dt)
+        pass
 
     def draw(self):
-        self._all_sprites.draw(self._screen)
         pg.display.flip()
 
-    def add_sprite(self, spr):
-        self._all_sprites.add(spr)
+    # def add_sprite(self, spr):
+    #     self._all_sprites.add(spr)
 
 # def play(args, cfg):
 #     # Create the static components
@@ -211,7 +233,7 @@ if __name__ == '__main__':
         screen.fill(BACKGROUND_COLOR)
         pg.display.update()
 
-        dots = Dots(screen)
+        dots = Dots(screen, args)
         dots.run()
 
     except Exception as e:

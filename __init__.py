@@ -1,3 +1,5 @@
+import random
+
 import pygame as pg
 from typing import TypeVar
 
@@ -22,8 +24,13 @@ YELLOW           = pg.Color(255, 255, 0)
 BUTTON_COLOR       = pg.Color(76, 97, 237)
 BUTTON_COLOR_HOVER = pg.Color(120, 136, 242)
 BUTTON_COLOR_DOWN  = pg.Color(28, 55, 233)
-PLAYER1_COLOR      = pg.Color(107, 209, 129)
-PLAYER2_COLOR      = pg.Color(204, 151, 222)
+
+PLAYER_COLORS = [
+    pg.Color(225, 232, 81),
+    pg.Color(245, 158, 66),
+    pg.Color(204, 151, 222),
+    pg.Color(107, 209, 129),
+]
 
 BACKGROUND_COLOR = WHITE
 
@@ -38,3 +45,8 @@ def is_even(a):
 
 def is_odd(a):
     return True if a % 2 else False
+
+def get_color():
+    global PLAYER_COLORS
+    return PLAYER_COLORS.pop()
+    
