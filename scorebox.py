@@ -1,21 +1,19 @@
 import pygame as pg
 
 from __init__ import *
+from config import Config
 from game import Game
 from player import Player
-
-GAP = 20
-WIDTH = 150
-HEIGHT = 40
 
 
 class Scorebox:
     def __init__(self, pos: tuple, player: Player):
         super().__init__()
+        self._cfg = Config()
         self._bg_color = LIGHT_GRAY
         self._pos = pos
         self._player = player
-        self._size = (WIDTH, HEIGHT)
+        self._size = (self._cfg.SCOREBOX_WIDTH, self._cfg.SCOREBOX_HEIGHT)
         self._screen = pg.display.get_surface()
 
         self._rect = pg.Rect(pos, self._size)
@@ -26,11 +24,11 @@ class Scorebox:
         self._arrow_rect.centery = self._rect.centery
 
         self._score_rect = pg.Rect(
-            self._rect.right - self._arrow_rect.width - 24,
-            self._rect.top + 6,
+            self._rect.right - self._arrow_rect.width - 48,
+            self._rect.top + (self._cfg.SCOREBOX_HEIGHT - 28) // 2,
             48, 28)
 
-        self._score_text_surf = FONT_20.render('0', True, BLACK)
+        self._score_text_surf = FONT_20.render('000', True, BLACK)
         self._score_text_rect = self._score_text_surf.get_rect()
         self._score_text_rect.center = self._score_rect.center
 
@@ -48,6 +46,8 @@ class Scorebox:
         return self._pos
 
     def draw(self) -> None:
+        if SHOW_OUTLINE:
+            pg.draw.rect(self._screen, RED, self._rect, width=1)
         pg.draw.rect(self._screen, self._player.color, self._score_rect)
         self._screen.blit(self._score_text_surf, self._score_text_rect)
         self._screen.blit(self._name_text_surf, self._name_text_rect)
@@ -58,4 +58,3 @@ class Scorebox:
 
     def __repr__(self) -> str:
         return str(self)
-    

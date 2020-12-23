@@ -10,7 +10,7 @@ class Edge(Entity):
         bg_color: pg.Color):
 
         super().__init__(origin, size, row, col, bg_color)
-        self.cfg = Config()
+        self._cfg = Config()
         self.is_captured = False
         self.cell1 = None
         self.cell2 = None
@@ -21,7 +21,7 @@ class Edge(Entity):
 
     def highlight(self) -> None:
         if not self.is_captured:
-            pg.draw.rect(self.screen, self.cfg.EDGE_COLOR_ACTIVATED, self,
+            pg.draw.rect(self.screen, self._cfg.EDGE_COLOR_ACTIVATED, self,
                 width=1)
             pg.display.update(self)
 
@@ -31,7 +31,7 @@ class Edge(Entity):
     def capture(self) -> None:
         if not self.is_captured:
             self.is_captured = True
-            self.bg_color = self.cfg.EDGE_COLOR_ACTIVATED
+            self.bg_color = self._cfg.EDGE_COLOR_ACTIVATED
             self.draw()
             return True
         return False

@@ -44,7 +44,7 @@ def parse_args():
         help='height of cells (default: 100 pixels)')
 
     parser.add_argument('-p', metavar='PLAYER', default=['Alice', 'Bob'],
-        nargs=2, help='names of the two - four players (default: Alice Bob)')
+        nargs='*', help='names of the two - four players (default: Alice Bob)')
 
     args = parser.parse_args()
     return args
@@ -67,14 +67,14 @@ class Dots:
 
         self._game = Game(self._players)
         # self._board = Board()
-        self._scoreboard = Scoreboard(self._cfg.SCOREBOARD_ORIGIN, 
+        self._scoreboard = Scoreboard(self._cfg.SCOREBOARD_ORIGIN,
             self._cfg.SCOREBOARD_SIZE, LIGHT_GRAY, self._game)
         self._scoreboard.draw()
         # self._banner = Banner(pg.Rect(self._cfg.BANNER_ORIGIN, self._cfg.BANNER_SIZE), LIGHT_GRAY)
 
         self._play_again_button = Button(
-            (screen_rect.width // 2 - 50, screen_rect.height - 50), (100, 35), 
-            text='Play Again?', visible=False)
+            (screen_rect.width // 2 - 50, screen_rect.height - 50), (100, 35),
+            text='Play Again?', visible=True)
         self._play_again_button.draw()
 
     def quit(self):
@@ -214,22 +214,11 @@ if __name__ == '__main__':
 
         # Config MUST be initialized here for the singleton to be configured
         # properly for use elsewhere
-        config = Config(rows=args.r, cols=args.c, cell_size=(args.w, args.t))
+        cfg = Config(cell_rows=args.r, cell_cols=args.c,
+            cell_size=(args.w, args.t), num_players=len(args.p))
 
         # Initialize pygame
-        screen = pg.display.set_mode((
-            config.COLS * config.CELL_WIDTH
-            + (config.COLS + 1) * config.EDGE_THICKNESS
-            + config.GUTTER_LEFT
-            + config.GUTTER_RIGHT,
-
-            config.ROWS * config.CELL_HEIGHT
-            + (config.ROWS + 1) * config.EDGE_THICKNESS
-            + config.GUTTER_TOP * 2
-            + config.SCOREBOARD_HEIGHT
-            + config.GUTTER_BOTTOM * 2
-            + config.BANNER_HEIGHT
-        ))
+        screen = pg.display.set_mode(cfg.SCREEN_SIZE)
         screen.fill(BACKGROUND_COLOR)
         pg.display.update()
 

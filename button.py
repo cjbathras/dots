@@ -8,8 +8,8 @@ BUTTON_DOWN = 'down'
 
 
 class Button:
-    def __init__(self, pos: tuple, size: tuple, callback: callable=None, 
-            font: pg.font.Font=FONT_16, text: str='', visible: bool=True, 
+    def __init__(self, pos: tuple, size: tuple, callback: callable=None,
+            font: pg.font.Font=FONT_16, text: str='', visible: bool=True,
             text_color: pg.Color=WHITE, radius: int=3):
         self._button_down = False
         self._pos = pos
@@ -37,19 +37,21 @@ class Button:
             # Get the button's surface and draw a rectangle on it
             self._rect = self._surf.get_rect()
             if self._state == BUTTON_NORMAL:
-                pg.draw.rect(self._surf, BUTTON_COLOR, self._rect, 
+                pg.draw.rect(self._surf, BUTTON_COLOR, self._rect,
                     border_radius=self._radius)
             elif self._state == BUTTON_HOVER:
-                pg.draw.rect(self._surf, BUTTON_COLOR_HOVER, self._rect, 
+                pg.draw.rect(self._surf, BUTTON_COLOR_HOVER, self._rect,
                     border_radius=self._radius)
-                pg.draw.rect(self._surf, BUTTON_COLOR_DOWN, self._rect, 
+                pg.draw.rect(self._surf, BUTTON_COLOR_DOWN, self._rect,
                     border_radius=self._radius, width=2)
             else:
-                pg.draw.rect(self._surf, BUTTON_COLOR_DOWN, self._rect, 
+                pg.draw.rect(self._surf, BUTTON_COLOR_DOWN, self._rect,
                     border_radius=self._radius)
 
-            # Render the text in the font and center it in the button's rectangle
-            self._text_surf = self._font.render(self._text, True, self._text_color)
+            # Render the text in the font and center it in the button's
+            # rectangle
+            self._text_surf = self._font.render(
+                self._text, True, self._text_color)
             self._text_rect = self._text_surf.get_rect()
             self._text_rect.center = self._rect.center
 

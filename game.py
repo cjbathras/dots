@@ -6,11 +6,11 @@ from player import Player
 class Game:
     def __init__(self, players: list[Player]):
         super().__init__()
-        self.cfg = Config()
+        self._cfg = Config()
         self._players = players
         self._player_ptr = 0
         self._scores = {p: 0 for p in self._players}
-        self._tgt_total = self.cfg.ROWS * self.cfg.COLS
+        self._tgt_total = self._cfg.CELL_ROWS * self._cfg.CELL_COLS
         self._total = 0
         self._is_over = False
 

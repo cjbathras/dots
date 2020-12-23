@@ -16,7 +16,7 @@ from entity import Entity
 class Board:
     def __init__(self):
         super().__init__()
-        self.cfg = Config()
+        self._cfg = Config()
 
         # A 2D array holding all of the entities that comprise the board
         # Size is 2*ROWS+1 x 2*COLS+1
@@ -36,70 +36,70 @@ class Board:
         self._entities = []
 
         entity = None
-        for r in range(0, (2 * self.cfg.ROWS + 1)):
+        for r in range(0, (2 * self._cfg.CELL_ROWS + 1)):
             row = []
-            for c in range(0, (2 * self.cfg.COLS + 1)):
+            for c in range(0, (2 * self._cfg.CELL_COLS + 1)):
                 if is_even(r) and is_even(c):
                     # dot
-                    size = (self.cfg.DOT_DIA, self.cfg.DOT_DIA)
+                    size = (self._cfg.DOT_DIA, self._cfg.DOT_DIA)
                     origin = (
-                        c // 2 * self.cfg.DOT_DIA
-                        + c // 2 * self.cfg.CELL_WIDTH
-                        + self.cfg.GUTTER_LEFT,
+                        c // 2 * self._cfg.DOT_DIA
+                        + c // 2 * self._cfg.CELL_WIDTH
+                        + self._cfg.GUTTER_WIDTH,
 
-                        r // 2 * self.cfg.DOT_DIA
-                        + r // 2 * self.cfg.CELL_HEIGHT
-                        + self.cfg.GUTTER_TOP * 2
-                        + self.cfg.SCOREBOARD_HEIGHT
+                        r // 2 * self._cfg.DOT_DIA
+                        + r // 2 * self._cfg.CELL_HEIGHT
+                        + self._cfg.GUTTER_WIDTH * 2
+                        + self._cfg.SCOREBOARD_HEIGHT
                     )
-                    entity = Dot(origin, size, r, c, self.cfg.DOT_COLOR)
+                    entity = Dot(origin, size, r, c, self._cfg.DOT_COLOR)
 
                 elif is_odd(r) and is_odd(c):
                     # cell
-                    size = self.cfg.CELL_SIZE
+                    size = self._cfg.CELL_SIZE
                     origin = (
-                        (c + 1) // 2 * self.cfg.EDGE_THICKNESS
-                        + (c - 1) // 2 * self.cfg.CELL_WIDTH
-                        + self.cfg.GUTTER_LEFT,
+                        (c + 1) // 2 * self._cfg.EDGE_THICKNESS
+                        + (c - 1) // 2 * self._cfg.CELL_WIDTH
+                        + self._cfg.GUTTER_WIDTH,
 
-                        (r + 1) // 2 * self.cfg.EDGE_THICKNESS
-                        + (r - 1) // 2 * self.cfg.CELL_HEIGHT
-                        + self.cfg.GUTTER_TOP * 2
-                        + self.cfg.SCOREBOARD_HEIGHT
+                        (r + 1) // 2 * self._cfg.EDGE_THICKNESS
+                        + (r - 1) // 2 * self._cfg.CELL_HEIGHT
+                        + self._cfg.GUTTER_WIDTH * 2
+                        + self._cfg.SCOREBOARD_HEIGHT
                     )
                     entity = Cell(origin, size, r, c,
-                        self.cfg.CELL_COLOR_DEFAULT)
+                        self._cfg.CELL_COLOR_DEFAULT)
 
                 else:
                     # edge
                     if is_even(r):
-                        size = (self.cfg.CELL_WIDTH, self.cfg.EDGE_THICKNESS)
+                        size = (self._cfg.CELL_WIDTH, self._cfg.EDGE_THICKNESS)
                         origin = (
-                            (c + 1) // 2 * self.cfg.DOT_DIA
-                            + (c - 1) // 2 * self.cfg.CELL_WIDTH
-                            + self.cfg.GUTTER_LEFT,
+                            (c + 1) // 2 * self._cfg.DOT_DIA
+                            + (c - 1) // 2 * self._cfg.CELL_WIDTH
+                            + self._cfg.GUTTER_WIDTH,
 
-                            r // 2 * self.cfg.DOT_DIA
-                            + r // 2 * self.cfg.CELL_HEIGHT
-                            + self.cfg.GUTTER_TOP * 2
-                            + self.cfg.SCOREBOARD_HEIGHT
+                            r // 2 * self._cfg.DOT_DIA
+                            + r // 2 * self._cfg.CELL_HEIGHT
+                            + self._cfg.GUTTER_WIDTH * 2
+                            + self._cfg.SCOREBOARD_HEIGHT
                         )
                         entity = Edge(origin, size, r, c,
-                            self.cfg.EDGE_COLOR_DEFAULT)
+                            self._cfg.EDGE_COLOR_DEFAULT)
                     else:
-                        size = (self.cfg.EDGE_THICKNESS, self.cfg.CELL_HEIGHT)
+                        size = (self._cfg.EDGE_THICKNESS, self._cfg.CELL_HEIGHT)
                         origin = (
-                            c // 2 * self.cfg.DOT_DIA
-                            + c // 2 * self.cfg.CELL_WIDTH
-                            + self.cfg.GUTTER_LEFT,
+                            c // 2 * self._cfg.DOT_DIA
+                            + c // 2 * self._cfg.CELL_WIDTH
+                            + self._cfg.GUTTER_WIDTH,
 
-                            (r + 1) // 2 * self.cfg.DOT_DIA
-                            + r // 2 * self.cfg.CELL_HEIGHT
-                            + self.cfg.GUTTER_TOP * 2
-                            + self.cfg.SCOREBOARD_HEIGHT
+                            (r + 1) // 2 * self._cfg.DOT_DIA
+                            + r // 2 * self._cfg.CELL_HEIGHT
+                            + self._cfg.GUTTER_WIDTH * 2
+                            + self._cfg.SCOREBOARD_HEIGHT
                         )
                         entity = Edge(origin, size, r, c,
-                            self.cfg.EDGE_COLOR_DEFAULT)
+                            self._cfg.EDGE_COLOR_DEFAULT)
 
                 row.append(entity)
                 self._entities.append(entity)
@@ -158,13 +158,13 @@ class Board:
                     if r == 0: # top row of board
                         entity.cell1 = None
                         entity.cell2 = self.board[r+1][c]
-                    elif r == 2 * self.cfg.ROWS: # bottom row of board
+                    elif r == 2 * self._cfg.CELL_ROWS: # bottom row of board
                         entity.cell1 = self.board[r-1][c]
                         entity.cell2 = None
                     elif c == 0: # left column of board
                         entity.cell1 = None
                         entity.cell2 = self.board[r][c+1]
-                    elif c == 2 * self.cfg.COLS: # right column of board
+                    elif c == 2 * self._cfg.CELL_COLS: # right column of board
                         entity.cell1 = self.board[r][c-1]
                         entity.cell2 = None
                     elif is_even(r): # horizontal edge

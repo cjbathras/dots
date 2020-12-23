@@ -17,7 +17,7 @@ clock = pg.time.Clock()
 # pg.draw.rect(screen, RED, r1)
 
 p = Player('Foobar', get_color())
-sb = Scorebox((100, 100), p)
+sb = Scorebox((0, 0), p)
 sb.draw()
 
 pg.display.update()
@@ -29,5 +29,5 @@ while True:
             break
 
         clock.tick(30)
-    
+
 pg.quit()
