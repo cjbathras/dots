@@ -18,7 +18,7 @@ class Scoreboard:
         self._bg_color = bg_color
         self._game = game
         self._screen = pg.display.get_surface()
-        self._scoreboxes = []
+        self._scoreboxes = {}
         x, y = self._pos
 
         num_rows = self._cfg.SCOREBOARD_ROWS
@@ -41,46 +41,26 @@ class Scoreboard:
                     (x + GAP_20 + self._cfg.SCOREBOX_WIDTH*(count-row*2) + i_gap*(count-row*2),
                     y + GAP_20 + self._cfg.SCOREBOX_HEIGHT*row + row*GAP_20),
                     self._game.players[count])
+                self._scoreboxes[self._game.players[count]] = sb
                 count += 1
-                self._scoreboxes.append(sb)
+
+        self.draw()
 
     def draw(self) -> None:
         if SHOW_OUTLINE:
             pg.draw.rect(self._screen, RED, self._rect, width=1)
         pg.draw.rect(self._screen, self._bg_color, self._rect)
         pg.draw.rect(self._screen, GRAY, self._rect, width=1)
-        for sb in self._scoreboxes:
+        for _, sb in self._scoreboxes.items():
             sb.draw()
 
         pg.display.update(self._rect)
 
-    def set_active_box(self, player: Player) -> None:
-        self._screen.blit(self._arrow, self._active_boxes[player])
-        pg.draw.rect(self._screen, self._bg_color, self.prev_active_box)
-        pg.display.update(self._active_boxes[player])
-        pg.display.update(self.prev_active_box)
-        self.prev_active_box = self._active_boxes[player]
+    def set_active(self, player: Player) -> None:
+        raise NotImplementedError()
 
-    def update_score(self, player: Player) -> None:
-        if player == self._game._players[0]:
-            pg.draw.rect(self._screen,
-                self._game._players[0].color, self.p1_scorebox)
-            self.p1_score_text = FONT_20.render( \
-                f'{self._game.get_score(player)}', True, BLACK)
-            self.p1_score_rect = self.p1_score_text.get_rect()
-            self.p1_score_rect.center = self.p1_scorebox.center
-            self._screen.blit(self.p1_score_text, self.p1_score_rect)
-            pg.display.update(self.p1_score_rect)
-
-        else:
-            pg.draw.rect(self._screen,
-                self._game._players[1].color, self.p2_scorebox)
-            self.p2_score_text = FONT_20.render( \
-                f'{self._game.get_score(player)}', True, BLACK)
-            self.p2_score_rect = self.p2_score_text.get_rect()
-            self.p2_score_rect.center = self.p2_scorebox.center
-            self._screen.blit(self.p2_score_text, self.p2_score_rect)
-            pg.display.update(self.p2_score_rect)
+    def update_score(self, player: Player, score: int) -> None:
+        self._scoreboxes[player].update_score(score)
 
     def __str__(self) -> str:
         return f'{type(self).__name__}: ' \

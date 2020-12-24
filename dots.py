@@ -1,12 +1,7 @@
 import argparse
-import sys
 import traceback
 
 import pygame as pg
-# from pygame.locals import QUIT
-# from pygame.locals import MOUSEBUTTONDOWN
-# from pygame.locals import MOUSEBUTTONUP
-# from pygame.locals import MOUSEMOTION
 
 from __init__ import *
 from banner import Banner
@@ -16,6 +11,7 @@ from cell import Cell
 from config import Config
 from dot import Dot
 from edge import Edge
+from entity import Entity
 from game import Game
 from player import Player
 from scoreboard import Scoreboard
@@ -66,24 +62,25 @@ class Dots:
             raise Exception('Only two to four players are allowed')
 
         self._game = Game(self._players)
-        # self._board = Board()
+        self._board = Board()
         self._scoreboard = Scoreboard(self._cfg.SCOREBOARD_ORIGIN,
             self._cfg.SCOREBOARD_SIZE, LIGHT_GRAY, self._game)
-        self._scoreboard.draw()
-        # self._banner = Banner(pg.Rect(self._cfg.BANNER_ORIGIN, self._cfg.BANNER_SIZE), LIGHT_GRAY)
 
         self._play_again_button = Button(
-            (screen_rect.width // 2 - 50, screen_rect.height - 50), (100, 35),
-            text='Play Again?', visible=True)
-        self._play_again_button.draw()
+            (screen_rect.width // 2 - 50, screen_rect.height - 70), (100, 35),
+            text='Play Again?', visible=False)
 
     def quit(self):
         self._done = True
 
     def run(self):
         # Game play loop
+        self._current_player = self._game.current_player()
+        self._highlighted_edge = None
+        self._cell_captured = False
+
         while not self._done:
-            self._dt = self._clock.tick(30) / 1000
+            self._clock.tick(30)
             self.handle_events()
             self.run_logic()
             self.draw()
@@ -94,11 +91,29 @@ class Dots:
             if event.type == pg.QUIT:
                 self._done = True
 
-            self._play_again_button.handle_event(event)
-            self._play_again_button.draw()
+            if event.type == pg.MOUSEMOTION:
+                entity = self._board.get_entity(event.pos)
+                if entity:
+                    entity.handle_event(event)
 
-            # for sprite in self._all_sprites:
-            #     sprite.handle_event(event)
+                # if entity and isinstance(entity, Edge):
+                #     entity.highlight()
+                #     self._highlighted_edge = entity
+                # elif self._highlighted_edge:
+                #     self._highlighted_edge.clear()
+
+            elif event.type == pg.MOUSEBUTTONUP:
+                entity = self._board.get_entity(event.pos)
+                if entity:
+                    entity.handle_event(event)
+
+                    # entity.capture()
+                    # if entity.cell1:
+                    #     entity.cell1.check_for_capture(self._current_player)
+                    # if entity.cell2:
+                    #     entity.cell2.check_for_capture(self._current_player)
+
+            self._play_again_button.handle_event(event)
 
     def run_logic(self):
         pass
@@ -106,104 +121,29 @@ class Dots:
     def draw(self):
         pg.display.flip()
 
-    # def add_sprite(self, spr):
-    #     self._all_sprites.add(spr)
-
-# def play(args, cfg):
-#     # Create the static components
-#     player1 = Player(args.p[0], PLAYER1_COLOR)
-#     player2 = Player(args.p[1], PLAYER2_COLOR)
-#     game = Game([player1, player2])
-#     board = Board()
-#     scoreboard = Scoreboard(
-#         pg.Rect(cfg.SCOREBOARD_ORIGIN, cfg.SCOREBOARD_SIZE),
-#         LIGHT_GRAY, game
-#     )
-#     banner = Banner(pg.Rect(cfg.BANNER_ORIGIN, cfg.BANNER_SIZE), LIGHT_GRAY)
-#     play_again_button = Button('Play Again?')
-#     play_again_button.center = \
-#         (pg.display.get_surface().get_width() // 2,
-#         pg.display.get_surface().get_height() \
-#         - play_again_button.height - 20)
-#     play_again_button.visible = False
-
-#     # Initialize game state
-#     current_player = game.current_player()
-#     highlighted_edge = None
-
-#     # Draw the components
-#     board.draw()
-#     scoreboard.draw()
-
-#     buttons = [play_again_button]
-
-#     # Game play loop
-#     while True:
-#         # Iterate through all of the current events in the event queue
-#         for event in pg.event.get():
-
-#             if event.type == QUIT:
-#                 pg.quit()
-#                 sys.exit()
-
-#             elif event.type == MOUSEMOTION:
-#                 location = board.get_row_col(event.pos)
-#                 entity = board[location]
-#                 if isinstance(entity, Edge) and not game.is_over:
-#                     entity.highlight()
-#                     highlighted_edge = entity
-#                 else:
-#                     if highlighted_edge:
-#                         highlighted_edge.clear()
-
-#                 for b in buttons:
-#                     b.on_mouse_enter(event.pos)
-#                     b.on_mouse_leave(event.pos)
-
-#             elif event.type == MOUSEBUTTONDOWN:
-#                 for b in buttons:
-#                     b.on_mouse_down(event.pos)
-
-#             elif event.type == MOUSEBUTTONUP:
-#                 location = board.get_row_col(event.pos)
-#                 entity = board[location]
-
 #                 if isinstance(entity, Edge):
 #                     edge_captured = entity.capture()
-
 #                     if edge_captured:
 #                         cell1_captured = \
 #                             entity.cell1.check_for_capture(current_player) \
 #                                 if entity.cell1 else False
-
 #                         cell2_captured = \
 #                             entity.cell2.check_for_capture(current_player) \
 #                                 if entity.cell2 else False
-
 #                         if not cell1_captured and not cell2_captured:
 #                             current_player = game.next_player()
 #                             scoreboard.set_active_box(current_player)
-
 #                         else:
 #                             if cell1_captured:
 #                                 game.increment_score(current_player)
 #                             if cell2_captured:
 #                                 game.increment_score(current_player)
-
 #                             scoreboard.update_score(current_player)
 #                             winner = game.check_for_winner()
-
 #                             if winner is not None:
 #                                 banner.draw(winner)
 #                                 play_again_button.visible = True
 #                                 play_again_button.draw()
-
-#                 for b in buttons:
-#                     b.on_mouse_up(event.pos)
-#                     banner.clear()
-
-#         # Very brief sleep so the process doesn't peg the CPU
-#         clock.tick(30)
 
 
 if __name__ == '__main__':

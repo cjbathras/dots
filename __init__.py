@@ -5,9 +5,9 @@ from typing import TypeVar
 
 from pygame.surfarray import array_colorkey
 
-TupleOrInt = TypeVar('TupleOrInt', tuple, int)
+# TupleOrInt = TypeVar('TupleOrInt', tuple, int)
 
-SHOW_OUTLINE = True
+SHOW_OUTLINE = False
 
 # Color definitions
 COLORKEY: pg.Color           = pg.Color(0, 0, 0) # Colorkey is used for transparency (any pixel with this color will not be drawn on blit)
@@ -19,6 +19,7 @@ GRAY: pg.Color               = pg.Color(128, 128, 128)
 GREEN: pg.Color              = pg.Color(0, 255, 0)
 LIGHT_GRAY: pg.Color         = pg.Color(240, 240, 240)
 MAGENTA: pg.Color            = pg.Color(255, 0, 255)
+PINK: pg.Color               = pg.Color(255, 214, 214)
 RED: pg.Color                = pg.Color(255, 0, 0)
 WHITE: pg.Color              = pg.Color(255, 255, 255)
 YELLOW: pg.Color             = pg.Color(255, 255, 0)
@@ -36,7 +37,7 @@ PLAYER_COLORS: list[pg.Color] = [
 
 BACKGROUND_COLOR: pg.Color      = WHITE
 EDGE_COLOR_DEFAULT: pg.Color    = LIGHT_GRAY
-EDGE_ACTIVATION_COLOR: pg.Color = pg.Color(125, 125, 255)
+EDGE_CAPTURE_COLOR: pg.Color = pg.Color(125, 125, 255)
 CELL_COLOR_DEFAULT: pg.Color    = WHITE
 DOT_COLOR: pg.Color             = BLACK
 

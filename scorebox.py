@@ -28,7 +28,7 @@ class Scorebox:
             self._rect.top + (self._cfg.SCOREBOX_HEIGHT - 28) // 2,
             48, 28)
 
-        self._score_text_surf = FONT_20.render('000', True, BLACK)
+        self._score_text_surf = FONT_20.render('0', True, BLACK)
         self._score_text_rect = self._score_text_surf.get_rect()
         self._score_text_rect.center = self._score_rect.center
 
@@ -51,6 +51,12 @@ class Scorebox:
         pg.draw.rect(self._screen, self._player.color, self._score_rect)
         self._screen.blit(self._score_text_surf, self._score_text_rect)
         self._screen.blit(self._name_text_surf, self._name_text_rect)
+
+    def update_score(self, score: int) -> None:
+        self._score_text_surf = FONT_20.render(f'{score}', True, BLACK)
+        self._score_text_rect = self._score_text_surf.get_rect()
+        self._score_text_rect.center = self._score_rect.center
+        self.draw()
 
     def __str__(self) -> str:
         return f'{type(self).__name__}: ' \

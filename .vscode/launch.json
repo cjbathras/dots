@@ -19,18 +19,18 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "args": [
-                "-r", "10",
-                "-c", "20",
-                "-w", "50",
-                "-t", "50",
-                "-p", "Alice", "Bob", "Charlie", "Don"
+                "-r", "2",
+                "-c", "2",
+                "-w", "250",
+                "-t", "250",
+                "-p", "Curt", "Susan", "Noah", "Bryce"
             ]
         },
         {
             "name": "Test",
             "type": "python",
             "request": "launch",
-            "program": "test2.py",
+            "program": "test3.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}"
         },

@@ -5,18 +5,21 @@ from entity import Entity
 
 
 class Dot(Entity):
-    def __init__(self, origin: tuple, size: tuple, row: int, col: int,
+    def __init__(self, pos: tuple, size: tuple, row: int, col: int,
         bg_color: pg.Color):
 
-        super().__init__(origin, size, row, col, bg_color)
+        super().__init__(pos, size, row, col, bg_color)
 
     def draw(self) -> None:
-        pg.draw.rect(self.screen, self.bg_color, self)
+        pg.draw.rect(self._screen, self._bg_color, self)
         pg.display.update(self)
 
+    def handle_event(self, event: pg.event) -> None:
+        return
+
     def __str__(self) -> str:
-        return f'{type(self).__name__}[{self.row},{self.col}]: ' \
-            f'origin={self.topleft} size={self.size}'
+        return f'{type(self).__name__}[{self._row},{self._col}]: ' \
+            f'origin={self.topleft} size={self._size}'
 
     def __repr__(self) -> str:
         return str(self)

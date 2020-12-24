@@ -85,6 +85,8 @@ class Button:
                         self._callback()
                     self._state = BUTTON_HOVER
                 self._button_down = False
+            
+            self.draw()
 
     def __str__(self) -> str:
         return f'{type(self).__name__}: text={self._text}'
