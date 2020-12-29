@@ -5,18 +5,18 @@ from __init__ import *
 cw = 100
 ch = 100
 dd = 10
-rows = 2
-cols = 2
-gutter = 0
+rows = 3
+cols = 3
+gutter = 20
 x_shift = 0
-y_shift = 0
+y_shift = 100
 
 pg.display.init()
 screen = pg.display.set_mode(
     (cw*cols + dd*(cols+1) + gutter*2 + x_shift, 
     ch*rows + dd*(rows+1) + gutter*2 + y_shift)
 )
-screen = pg.display.set_mode((1000, 1000))
+# screen = pg.display.set_mode((1000, 1000))
 screen.fill(WHITE)
 clock = pg.time.Clock()
 
@@ -32,28 +32,6 @@ for r in range(0, rows + 1):
         row.append(rect)
         pg.draw.rect(screen, BLACK, rect)
     dots.append(row)
-
-# edges = []
-# for r in range(0, rows * 2 + 1):
-#     row = []
-#     for c in range(0, cols + 1):
-#         if is_even(r) and c < cols:
-#             rect = pg.Rect(
-#                 (c + 1) * dd + c * cw + gutter + x_shift,
-#                 r // 2 * dd + r // 2 * ch + gutter + y_shift, 
-#                 cw, dd
-#             )
-#             row.append(rect)
-#             pg.draw.rect(screen, RED, rect)
-#         elif is_odd(r):
-#             rect = pg.Rect(
-#                 c * dd + c * cw + gutter + x_shift, 
-#                 (r + 1) // 2 * dd + r // 2 * ch + gutter + y_shift, 
-#                 dd, ch
-#             )
-#             row.append(rect)
-#             pg.draw.rect(screen, RED, rect)
-#     edges.append(row)
 
 edges = []
 for r in range(0, rows + 1):
@@ -78,14 +56,27 @@ for r in range(0, rows + 1):
             )
             pg.draw.rect(screen, RED, v_edge)
     
+        # Group the edges into tuples with (usually) two edges per tuple. Each
+        # tuple is stored by row,col in the edges 2-D list. The last column
+        # will only have the vertical edge in the tuple. The last row will only
+        # have the horizontal edge in the tuple. The last row and column will
+        # be empty.
         if h_edge and v_edge:
             row.append((h_edge, v_edge))
         elif h_edge:
             row.append((h_edge,))
         elif v_edge:
             row.append((v_edge,))
+        else:
+            row.append(())
 
     edges.append(row)
+
+# Now when looking up the edge that contains x,y, you can quickly retrieve the
+# tuple of edges that possibly contains x,y by:
+# row = y // (dd + ch)
+# col = x // (dd + cw)
+# Then simply check collidepoint on each edge to see if it contains the x,y
 
 cells = []
 for r in range(0, rows):
