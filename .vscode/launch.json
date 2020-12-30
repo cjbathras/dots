@@ -19,10 +19,10 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "args": [
-                "-r", "2",
-                "-c", "2",
-                "-w", "250",
-                "-t", "250",
+                "-r", "3",
+                "-c", "3",
+                "-w", "200",
+                "-t", "200",
                 "-p", "Curt", "Susan", "Noah", "Bryce"
             ]
         },

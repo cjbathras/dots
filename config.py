@@ -6,8 +6,8 @@ from singleton import Singleton
 
 class Config(metaclass=Singleton):
     def __init__(self, cell_rows: int=5, cell_cols: int=5,
-        cell_size: tuple=(100, 100), num_players: int=2, dot_radius: int=5,
-        gutter_width: int=20):
+        cell_size: tuple=(100, 100), num_players: int=2, dot_radius: int=6,
+        gutter_width: int=0):
 
         self._cell_rows: int = cell_rows
         self._cell_cols: int = cell_cols
@@ -16,7 +16,7 @@ class Config(metaclass=Singleton):
         self._dot_rad: int = dot_radius
         # Gutter is the empty spacing surrounding the drawn components to offset
         # them from the display window.
-        self._gutter_width: int    = gutter_width
+        self._gutter_width: int = gutter_width
 
     @property
     def BANNER_WIDTH(self) -> int:
@@ -84,7 +84,7 @@ class Config(metaclass=Singleton):
     def MIN_ALLOWABLE_SCREEN_WIDTH(self) -> int:
         multiplier = 3 if self.NUM_PLAYERS == 3 else 2
         return self.SCOREBOX_WIDTH * multiplier \
-            + GAP_30 * (multiplier - 1) + GAP_20*2 + self.GUTTER_WIDTH*2
+            + GAP_30 * (multiplier - 1) + GAP_20 * 2 + self.GUTTER_WIDTH * 2
 
     @property
     def NUM_PLAYERS(self) -> int:
@@ -138,7 +138,7 @@ class Config(metaclass=Singleton):
 
     @property
     def SCREEN_WIDTH(self) -> int:
-        potential_width = self.BOARD_WIDTH + self.GUTTER_WIDTH*2
+        potential_width = self.BOARD_WIDTH + self.GUTTER_WIDTH * 2
         return max(potential_width, self.MIN_ALLOWABLE_SCREEN_WIDTH)
 
     @property
@@ -146,9 +146,7 @@ class Config(metaclass=Singleton):
         return self.CELL_ROWS * self.CELL_HEIGHT \
             + (self.CELL_ROWS + 1) * self.EDGE_THICKNESS \
             + self.GUTTER_WIDTH * 2 \
-            + self.SCOREBOARD_HEIGHT \
-            + self.GUTTER_WIDTH * 2 \
-            + self.BANNER_HEIGHT
+            + self.SCOREBOARD_HEIGHT + GAP_20
 
     @property
     def SCREEN_CENTER(self) -> tuple:

@@ -16,8 +16,6 @@ from game import Game
 from player import Player
 from scoreboard import Scoreboard
 
-clock = pg.time.Clock()
-
 DESCRIPTION="""
 A simple game of trying to capture as many cells as you can by connecting
 the dots.
@@ -62,13 +60,15 @@ class Dots:
             raise Exception('Only two to four players are allowed')
 
         self._game = Game(self._players)
+        # self._scoreboard = Scoreboard(self._cfg.SCOREBOARD_ORIGIN,
+        #     self._cfg.SCOREBOARD_SIZE, LIGHT_GRAY, self._game)
+        # self._board = Board(
+        #     x_shift=0, y_shift=self._cfg.SCOREBOARD_HEIGHT+GAP_20)
         self._board = Board()
-        self._scoreboard = Scoreboard(self._cfg.SCOREBOARD_ORIGIN,
-            self._cfg.SCOREBOARD_SIZE, LIGHT_GRAY, self._game)
 
-        self._play_again_button = Button(
-            (screen_rect.width // 2 - 50, screen_rect.height - 70), (100, 35),
-            text='Play Again?', visible=False)
+        # self._play_again_button = Button(
+        #     (screen_rect.width // 2 - 50, screen_rect.height - 70), (100, 35),
+        #     text='Play Again?', visible=False)
 
     def quit(self):
         self._done = True
@@ -92,58 +92,24 @@ class Dots:
                 self._done = True
 
             if event.type == pg.MOUSEMOTION:
-                entity = self._board.get_entity(event.pos)
-                if entity:
-                    entity.handle_event(event)
-
-                # if entity and isinstance(entity, Edge):
-                #     entity.highlight()
-                #     self._highlighted_edge = entity
-                # elif self._highlighted_edge:
-                #     self._highlighted_edge.clear()
+                edge = self._board.get_edge(event.pos)
+                if edge:
+                    self._board.highlight_edge(edge)
+                else:
+                    self._board.unhighlight_edge()
 
             elif event.type == pg.MOUSEBUTTONUP:
-                entity = self._board.get_entity(event.pos)
-                if entity:
-                    entity.handle_event(event)
+                edge = self._board.get_edge(event.pos)
+                if edge:
+                    edge.handle_event(event)
 
-                    # entity.capture()
-                    # if entity.cell1:
-                    #     entity.cell1.check_for_capture(self._current_player)
-                    # if entity.cell2:
-                    #     entity.cell2.check_for_capture(self._current_player)
-
-            self._play_again_button.handle_event(event)
+            # self._play_again_button.handle_event(event)
 
     def run_logic(self):
         pass
 
     def draw(self):
         pg.display.flip()
-
-#                 if isinstance(entity, Edge):
-#                     edge_captured = entity.capture()
-#                     if edge_captured:
-#                         cell1_captured = \
-#                             entity.cell1.check_for_capture(current_player) \
-#                                 if entity.cell1 else False
-#                         cell2_captured = \
-#                             entity.cell2.check_for_capture(current_player) \
-#                                 if entity.cell2 else False
-#                         if not cell1_captured and not cell2_captured:
-#                             current_player = game.next_player()
-#                             scoreboard.set_active_box(current_player)
-#                         else:
-#                             if cell1_captured:
-#                                 game.increment_score(current_player)
-#                             if cell2_captured:
-#                                 game.increment_score(current_player)
-#                             scoreboard.update_score(current_player)
-#                             winner = game.check_for_winner()
-#                             if winner is not None:
-#                                 banner.draw(winner)
-#                                 play_again_button.visible = True
-#                                 play_again_button.draw()
 
 
 if __name__ == '__main__':

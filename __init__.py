@@ -37,7 +37,7 @@ PLAYER_COLORS: list[pg.Color] = [
 
 BACKGROUND_COLOR: pg.Color      = WHITE
 EDGE_COLOR_DEFAULT: pg.Color    = LIGHT_GRAY
-EDGE_CAPTURE_COLOR: pg.Color = pg.Color(125, 125, 255)
+EDGE_CAPTURE_COLOR: pg.Color    = pg.Color(125, 125, 255)
 CELL_COLOR_DEFAULT: pg.Color    = WHITE
 DOT_COLOR: pg.Color             = BLACK
 
