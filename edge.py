@@ -44,13 +44,13 @@ class Edge(Entity):
         pg.draw.rect(self._screen, self._bg_color, self)
         if not self._is_captured:
             if self._is_highlighted:
-                pg.draw.rect(self._screen, EDGE_CAPTURE_COLOR, self, width=1)
+                pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED, self, width=1)
         pg.display.update(self)
 
     def capture(self) -> None:
         self._is_captured = True
         self._is_highlighted = False
-        self._bg_color = EDGE_CAPTURE_COLOR
+        self._bg_color = EDGE_COLOR_CAPTURED
 
     def highlight(self) -> None:
         self._is_highlighted = True

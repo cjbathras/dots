@@ -78,6 +78,7 @@ class Dots:
         self._current_player = self._game.current_player()
         self._highlighted_edge = None
         self._cell_captured = False
+        self._captured_edge = None
 
         while not self._done:
             self._clock.tick(30)
@@ -100,13 +101,16 @@ class Dots:
 
             elif event.type == pg.MOUSEBUTTONUP:
                 edge = self._board.get_edge(event.pos)
-                if edge:
-                    edge.handle_event(event)
+                if edge and not edge['is_captured']:
+                    self._board.capture_edge(edge)
+                    self._captured_edge = edge
 
             # self._play_again_button.handle_event(event)
 
     def run_logic(self):
-        pass
+        if self._captured_edge:
+            print(self._captured_edge)
+            self._captured_edge = None
 
     def draw(self):
         pg.display.flip()

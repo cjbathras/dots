@@ -55,7 +55,7 @@ class Board:
             self._cells.append(row)
 
         # Create the edges
-        self._edges: list[list[pg.Rect]] = []
+        self._edges: list[list[dict]] = []
         for r in range(0, self._cfg.CELL_ROWS + 1):
             row = []
             for c in range(0, self._cfg.CELL_COLS + 1):
@@ -93,23 +93,25 @@ class Board:
                 # The last column will only have the vertical edge in the tuple.
                 # The last row will only have the horizontal edge in the tuple.
                 # The last row and column will be empty.
+                # Each member of the tuple is a dict that stores a reference to
+                # the pg.Rect that represents the edge and its capture status.
                 if h_edge and v_edge:
-                    row.append((h_edge, v_edge))
+                    row.append((
+                        {'rect': h_edge, 'is_captured': False}, 
+                        {'rect': v_edge, 'is_captured': False} 
+                    ))
                 elif h_edge:
-                    row.append((h_edge,))
+                    row.append((
+                        {'rect': h_edge, 'is_captured': False}, 
+                    ))
                 elif v_edge:
-                    row.append((v_edge,))
+                    row.append((
+                        {'rect': v_edge, 'is_captured': False}, 
+                    ))
                 else:
                     row.append(())
 
             self._edges.append(row)
-
-        # Now when looking up the edge that contains x,y, you can quickly 
-        # retrieve the tuple of edges that possibly contains x,y by:
-        # row = y // (dd + ch)
-        # col = x // (dd + cw)
-        # Then simply check collidepoint on each edge to see if it contains the 
-        # x,y
 
         # Now that all the entities have been created, it's time to establish
         # all of the connection relationships between them.
@@ -117,31 +119,47 @@ class Board:
 
         self.draw()
 
-    def get_edge(self, pos: tuple) -> pg.Rect:
+    def get_edge(self, pos: tuple) -> dict:
+        # To look up the edge to see if it contains the x,y you can quickly 
+        # retrieve the tuple of edges that possibly contains x,y by:
+        # row = y // (dd + ch)
+        # col = x // (dd + cw)
+        # Then simply check collidepoint on each edge to see if it contains the 
+        # x,y
         x, y = pos
         row = y // (self._cfg.DOT_DIA + self._cfg.CELL_HEIGHT)
         col = x // (self._cfg.DOT_DIA + self._cfg.CELL_WIDTH)
         edges = self._edges[row][col]
 
         for edge in edges:
-            if edge.collidepoint(pos):
+            if edge['rect'].collidepoint(pos):
                 return edge
         return None
 
-    def highlight_edge(self, edge: pg.Rect) -> None:
-        if self._highlighted_edge != edge:
+    def highlight_edge(self, edge: dict) -> None:
+        if not edge['is_captured'] and self._highlighted_edge != edge:
             if self._highlighted_edge:
-                pg.draw.rect(self._screen, EDGE_COLOR_DEFAULT, self._highlighted_edge)
-                pg.display.update(self._highlighted_edge)
+                pg.draw.rect(self._screen,
+                    EDGE_COLOR_DEFAULT, self._highlighted_edge['rect'])
+                pg.display.update(self._highlighted_edge['rect'])
                 
-            pg.draw.rect(self._screen, EDGE_CAPTURE_COLOR, edge, width=1)
-            pg.display.update(edge)
+            pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED,
+                edge['rect'], width=1)
+            pg.display.update(edge['rect'])
             self._highlighted_edge = edge
 
     def unhighlight_edge(self) -> None:
         if self._highlighted_edge:
-            pg.draw.rect(self._screen, EDGE_COLOR_DEFAULT, self._highlighted_edge)
-            pg.display.update(self._highlighted_edge)
+            pg.draw.rect(self._screen, EDGE_COLOR_DEFAULT, 
+                self._highlighted_edge['rect'])
+            pg.display.update(self._highlighted_edge['rect'])
+            self._highlighted_edge = None
+
+    def capture_edge(self, edge: dict) -> None:
+        self._highlighted_edge = None
+        edge['is_captured'] = True
+        pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED, edge['rect'])
+        pg.display.update(edge['rect'])
 
     def _establish_connections(self) -> None:
         for row in self._board:
