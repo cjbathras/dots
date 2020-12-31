@@ -5,14 +5,13 @@ from entity import Entity
 
 
 class Dot(Entity):
-    def __init__(self, pos: tuple, size: tuple, row: int, col: int,
-        bg_color: pg.Color):
+    def __init__(self, pos: tuple, size: tuple, bg_color: pg.Color):
 
-        super().__init__(pos, size, row, col, bg_color)
+        super().__init__(pos, size, bg_color)
 
     def draw(self) -> None:
         pg.draw.rect(self._screen, self._bg_color, self)
-        pg.display.update(self)
+        # pg.display.update(self)
 
     def handle_event(self, event: pg.event) -> None:
         return

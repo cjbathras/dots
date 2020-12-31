@@ -101,7 +101,7 @@ class Dots:
 
             elif event.type == pg.MOUSEBUTTONUP:
                 edge = self._board.get_edge(event.pos)
-                if edge and not edge['is_captured']:
+                if edge and not edge.captured:
                     self._board.capture_edge(edge)
                     self._captured_edge = edge
 
@@ -109,7 +109,6 @@ class Dots:
 
     def run_logic(self):
         if self._captured_edge:
-            print(self._captured_edge)
             self._captured_edge = None
 
     def draw(self):

@@ -6,23 +6,22 @@ from entity import Entity
 
 
 class Edge(Entity):
-    def __init__(self, pos: tuple, size: tuple, row: int, col: int,
-        bg_color: pg.Color):
+    def __init__(self, pos: tuple, size: tuple, bg_color: pg.Color):
 
-        super().__init__(pos, size, row, col, bg_color)
+        super().__init__(pos, size, bg_color)
         self._cfg = Config()
-        self._is_captured = False
-        self._is_highlighted = False
+        self._captured = False
+        self._highlighted = False
         self._cell1 = None
         self._cell2 = None
 
     @property
-    def is_captured(self) -> bool:
-        return self._is_captured
+    def captured(self) -> bool:
+        return self._captured
 
     @property
-    def is_highlighted(self) -> bool:
-        return self._is_highlighted
+    def highlighted(self) -> bool:
+        return self._highlighted
 
     @property
     def cell1(self):
@@ -42,21 +41,21 @@ class Edge(Entity):
 
     def draw(self) -> None:
         pg.draw.rect(self._screen, self._bg_color, self)
-        if not self._is_captured:
-            if self._is_highlighted:
+        if not self._captured:
+            if self._highlighted:
                 pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED, self, width=1)
-        pg.display.update(self)
+        # pg.display.update(self)
 
     def capture(self) -> None:
-        self._is_captured = True
-        self._is_highlighted = False
+        self._captured = True
+        self._highlighted = False
         self._bg_color = EDGE_COLOR_CAPTURED
 
     def highlight(self) -> None:
-        self._is_highlighted = True
+        self._highlighted = True
 
     def clear(self) -> None:
-        self._is_highlighted = False
+        self._highlighted = False
 
     def handle_event(self, event: pg.event) -> None:
         if event.type == pg.MOUSEMOTION:

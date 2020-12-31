@@ -6,12 +6,9 @@ from __init__ import *
 
 
 class Entity(pg.Rect, metaclass=ABCMeta):
-    def __init__(self, pos: tuple, size: tuple, row: int, col: int,
-        bg_color: pg.Color):
+    def __init__(self, pos: tuple, size: tuple, bg_color: pg.Color):
 
         super().__init__(pos, size)
-        self._row: int = row
-        self._col: int = col
         self._bg_color: pg.Color = bg_color
         self._screen: pg.Surface = pg.display.get_surface()
 
@@ -21,13 +18,13 @@ class Entity(pg.Rect, metaclass=ABCMeta):
     @abstractmethod
     def handle_event(self, event: pg.event) -> None: pass
 
-    @property
-    def row(self) -> int:
-        return self._row
+    # @property
+    # def row(self) -> int:
+    #     return self._row
         
-    @property
-    def col(self) -> int:
-        return self._col
+    # @property
+    # def col(self) -> int:
+    #     return self._col
         
     @property
     def bg_color(self) -> pg.Color:

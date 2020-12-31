@@ -21,108 +21,106 @@ class Board:
         self._highlighted_edge = None
 
         # Create the dots
-        self._dots: list[list[Dot]] = []
+        self._dots: list[list[pg.Rect]] = []
         for r in range(0, self._cfg.CELL_ROWS + 1):
             row = []
             for c in range(0, self._cfg.CELL_COLS + 1):
-                dot = Dot(
-                    ((self._cfg.DOT_DIA + self._cfg.CELL_WIDTH) * c 
+                rect = pg.Rect(
+                    (self._cfg.DOT_DIA + self._cfg.CELL_WIDTH) * c 
                     + self._cfg.GUTTER_WIDTH + x_shift, 
                     (self._cfg.DOT_DIA + self._cfg.CELL_HEIGHT) * r 
-                    + self._cfg.GUTTER_WIDTH + y_shift),
-                    
-                    (self._cfg.DOT_DIA, self._cfg.DOT_DIA),
-
-                    BLACK
+                    + self._cfg.GUTTER_WIDTH + y_shift, 
+                    self._cfg.DOT_DIA, 
+                    self._cfg.DOT_DIA
                 )
-                row.append(dot)
-                dot.draw()
+                row.append(rect)
+                pg.draw.rect(self._screen, BLACK, rect)
             self._dots.append(row)
 
         # Create the cells
-        self._cells: list[list[Cell]] = []
+        self._cells: list[list[pg.Rect]] = []
         for r in range(0, self._cfg.CELL_ROWS):
             row = []
             for c in range(0, self._cfg.CELL_COLS):
-                cell = Cell(
-                    ((c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
+                rect = pg.Rect(
+                    (c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
                     + self._cfg.GUTTER_WIDTH + x_shift, 
                     (r + 1) * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT 
-                    + self._cfg.GUTTER_WIDTH + y_shift), 
-
-                    (self._cfg.CELL_WIDTH,  self._cfg.CELL_HEIGHT),
-                    
-                    BACKGROUND_COLOR
+                    + self._cfg.GUTTER_WIDTH + y_shift, 
+                    self._cfg.CELL_WIDTH, 
+                    self._cfg.CELL_HEIGHT
                 )
-                row.append(cell)
-                cell.draw()
+                pg.draw.rect(self._screen, BACKGROUND_COLOR, rect)
+                row.append(
+                    {'rect': rect, 'edges': {}}
+                )
             self._cells.append(row)
 
         # Create the edges
-        self._edges: list[list[Edge]] = []
+        self._edges: list[list[dict]] = []
         for r in range(0, self._cfg.CELL_ROWS + 1):
             row = []
             for c in range(0, self._cfg.CELL_COLS + 1):
                 h_edge, v_edge = None, None
                 if c < self._cfg.CELL_COLS:
                     # horizontal edge
-                    h_edge = Edge(
-                        ((c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
+                    h_edge = pg.Rect(
+                        (c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
                         + self._cfg.GUTTER_WIDTH + x_shift,
+
                         r * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT 
-                        + self._cfg.GUTTER_WIDTH + y_shift),
+                        + self._cfg.GUTTER_WIDTH + y_shift,
 
-                        (self._cfg.CELL_WIDTH, self._cfg.DOT_DIA),
-
-                        EDGE_COLOR_DEFAULT
+                        self._cfg.CELL_WIDTH, 
+                        self._cfg.DOT_DIA
                     )
-                    h_edge.draw()
+                    pg.draw.rect(self._screen, EDGE_COLOR_DEFAULT, h_edge)
 
-                    # # Establish cell relationships
-                    # cells = ()
-                    # if r == 0:
-                    #     self._cells[r][c]['edges']['top'] = h_edge
-                    #     cells = (self._cells[r][c],)
-                    # elif r == self._cfg.CELL_ROWS - 1:
-                    #     self._cells[r-1][c]['edges']['bottom'] = h_edge
-                    #     cells = (self._cells[r-1][c],)
-                    # elif r < self._cfg.CELL_ROWS:
-                    #     self._cells[r][c]['edges']['top'] = h_edge
-                    #     self._cells[r-1][c]['edges']['bottom'] = h_edge
-                    #     cells = (self._cells[r][c], self._cells[r-1][c])
+                    # Establish cell relationships
+                    cells = ()
+                    if r == 0:
+                        self._cells[r][c]['edges']['top'] = h_edge
+                        cells = (self._cells[r][c],)
+                    elif r == self._cfg.CELL_ROWS - 1:
+                        self._cells[r-1][c]['edges']['bottom'] = h_edge
+                        cells = (self._cells[r-1][c],)
+                    elif r < self._cfg.CELL_ROWS:
+                        self._cells[r][c]['edges']['top'] = h_edge
+                        self._cells[r-1][c]['edges']['bottom'] = h_edge
+                        cells = (self._cells[r][c], self._cells[r-1][c])
 
-                    # h_edge = {'rect': h_edge, 'is_captured': False, 
-                    #     'cells': cells}
+                    h_edge = {'rect': h_edge, 'is_captured': False, 
+                        'cells': cells}
                 
                 if r < self._cfg.CELL_ROWS:
                     # vertical edge
-                    v_edge = Edge(
-                        (c * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
+                    v_edge = pg.Rect(
+                        c * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
                         + self._cfg.GUTTER_WIDTH + x_shift,
+                        
                         (r + 1) * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT 
-                        + self._cfg.GUTTER_WIDTH + y_shift),
+                        + self._cfg.GUTTER_WIDTH + y_shift,
 
-                        (self._cfg.DOT_DIA, self._cfg.CELL_HEIGHT),
-
-                        EDGE_COLOR_DEFAULT
+                        self._cfg.DOT_DIA, 
+                        self._cfg.CELL_HEIGHT
                     )
-                    v_edge.draw()
+                    pg.draw.rect(self._screen, EDGE_COLOR_DEFAULT, v_edge)
 
-                    # # Establish cell relationships
-                    # cells = ()
-                    # if c == 0:
-                    #     self._cells[r][c]['edges']['left'] = v_edge
-                    #     cells = (self._cells[r][c],)
-                    # elif c == self._cfg.CELL_COLS - 1:
-                    #     self._cells[r][c-1]['edges']['right'] = v_edge
-                    #     cells = (self._cells[r][c-1],)
-                    # elif c < self._cfg.CELL_COLS:
-                    #     self._cells[r][c]['edges']['left'] = v_edge
-                    #     self._cells[r][c-1]['edges']['right'] = v_edge
-                    #     cells = (self._cells[r][c], self._cells[r][c-1])
+                    # Establish cell relationships
+                    cells = ()
+                    if c == 0:
+                        self._cells[r][c]['edges']['left'] = v_edge
+                        cells = (self._cells[r][c],)
+                    elif c == self._cfg.CELL_COLS - 1:
+                        self._cells[r][c-1]['edges']['right'] = v_edge
+                        cells = (self._cells[r][c-1],)
+                    elif c < self._cfg.CELL_COLS:
+                        self._cells[r][c]['edges']['left'] = v_edge
+                        self._cells[r][c-1]['edges']['right'] = v_edge
+                        cells = (self._cells[r][c], self._cells[r][c-1])
 
-                    # v_edge = {'rect': v_edge, 'is_captured': False, 
-                    #     'cells': cells}
+                    v_edge = {'rect': v_edge, 'is_captured': False, 
+                        'cells': cells}
             
                 # Group the edges into tuples with (usually) two edges per 
                 # tuple. Each tuple is stored by row,col in the edges 2-D list.
@@ -148,7 +146,7 @@ class Board:
 
         self.draw()
 
-    def get_edge(self, pos: tuple) -> Edge:
+    def get_edge(self, pos: tuple) -> dict:
         # To look up the edge to see if it contains the x,y you can quickly 
         # retrieve the tuple of edges that possibly contains x,y by:
         # row = y // (dd + ch)
@@ -161,33 +159,34 @@ class Board:
         edges = self._edges[row][col]
 
         for edge in edges:
-            if edge.collidepoint(pos):
+            if edge['rect'].collidepoint(pos):
                 return edge
         return None
 
-    def highlight_edge(self, edge: Edge) -> None:
-        if not edge.captured and self._highlighted_edge != edge:
+    def highlight_edge(self, edge: dict) -> None:
+        if not edge['is_captured'] and self._highlighted_edge != edge:
             if self._highlighted_edge:
                 pg.draw.rect(self._screen,
-                    EDGE_COLOR_DEFAULT, self._highlighted_edge)
-                pg.display.update(self._highlighted_edge)
+                    EDGE_COLOR_DEFAULT, self._highlighted_edge['rect'])
+                pg.display.update(self._highlighted_edge['rect'])
                 
-            pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED, edge, width=1)
-            pg.display.update(edge)
+            pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED,
+                edge['rect'], width=1)
+            pg.display.update(edge['rect'])
             self._highlighted_edge = edge
 
     def unhighlight_edge(self) -> None:
         if self._highlighted_edge:
             pg.draw.rect(self._screen, EDGE_COLOR_DEFAULT, 
-                self._highlighted_edge)
-            pg.display.update(self._highlighted_edge)
+                self._highlighted_edge['rect'])
+            pg.display.update(self._highlighted_edge['rect'])
             self._highlighted_edge = None
 
-    def capture_edge(self, edge: Edge) -> None:
+    def capture_edge(self, edge: dict) -> None:
         self._highlighted_edge = None
-        edge.captured = True
-        pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED, edge)
-        pg.display.update(edge)
+        edge['is_captured'] = True
+        pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED, edge['rect'])
+        pg.display.update(edge['rect'])
 
     def draw(self) -> None:
         pg.display.flip()

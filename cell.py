@@ -7,69 +7,68 @@ from player import Player
 
 
 class Cell(Entity):
-    def __init__(self, pos: tuple, size: tuple, row: int, col: int,
-        bg_color: pg.Color):
+    def __init__(self, pos: tuple, size: tuple, bg_color: pg.Color):
 
-        super().__init__(pos, size, row, col, bg_color)
-        self._is_captured: bool = False
+        super().__init__(pos, size, bg_color)
+        self._captured: bool = False
         self._captured_by: Player = None
-        self._edge_top: Edge = None
-        self._edge_bottom: Edge = None
-        self._edge_left: Edge = None
-        self._edge_right: Edge = None
+        self._top: Edge = None
+        self._bottom: Edge = None
+        self._left: Edge = None
+        self._right: Edge = None
 
     @property
-    def is_captured(self) -> bool:
-        return self._is_captured
+    def captured(self) -> bool:
+        return self._captured
 
     @property
     def captured_by(self) -> Player:
         return self._captured_by
 
     @property
-    def edge_top(self) -> Edge:
-        return self._edge_top
+    def top(self) -> Edge:
+        return self._top
 
-    @edge_top.setter
-    def edge_top(self, val) -> None:
-        self._edge_top = val
-
-    @property
-    def edge_bottom(self) -> Edge:
-        return self.edge_bottom
-
-    @edge_bottom.setter
-    def edge_bottom(self, val) -> None:
-        self._edge_bottom = val
+    @top.setter
+    def top(self, val) -> None:
+        self._top = val
 
     @property
-    def edge_right(self) -> Edge:
-        return self._edge_right
+    def bottom(self) -> Edge:
+        return self._bottom
 
-    @edge_right.setter
-    def edge_right(self, val) -> None:
-        self._edge_right = val
+    @bottom.setter
+    def bottom(self, val) -> None:
+        self._bottom = val
 
     @property
-    def edge_left(self) -> Edge:
-        return self._edge_left
+    def right(self) -> Edge:
+        return self._right
 
-    @edge_left.setter
-    def edge_left(self, val) -> None:
-        self._edge_left = val
+    @right.setter
+    def right(self, val) -> None:
+        self._right = val
+
+    @property
+    def left(self) -> Edge:
+        return self._left
+
+    @left.setter
+    def left(self, val) -> None:
+        self._left = val
 
     def handle_event(self, event: pg.event) -> None:
         return
 
     def draw(self) -> None:
         pg.draw.rect(self._screen, self._bg_color, self)
-        pg.display.update(self)
+        # pg.display.update(self)
 
     def check_for_capture(self, player: Player) -> None:
-        if self._edge_top.is_captured and self._edge_bottom.is_captured \
-            and self._edge_left.is_captured and self._edge_right.is_captured:
+        if self._top.is_captured and self._bottom.is_captured \
+            and self._left.is_captured and self._right.is_captured:
 
-            self._is_captured = True
+            self._captured = True
             self._captured_by = player
             self._bg_color = player.color
             self.draw()
