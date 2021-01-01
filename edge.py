@@ -44,50 +44,25 @@ class Edge(Entity):
         if not self._captured:
             if self._highlighted:
                 pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED, self, width=1)
-        # pg.display.update(self)
-
-    def capture(self) -> None:
-        self._captured = True
-        self._highlighted = False
-        self._bg_color = EDGE_COLOR_CAPTURED
-
-    def highlight(self) -> None:
-        self._highlighted = True
 
     def clear(self) -> None:
         self._highlighted = False
+        self.draw()
 
     def handle_event(self, event: pg.event) -> None:
         if event.type == pg.MOUSEMOTION:
-            self.highlight()
+            self._highlighted = True
         
         elif event.type == pg.MOUSEBUTTONUP:
-            self.capture()
-            if self.cell1:
-                self.cell1.check_for_capture(self._current_player)
-            if self.cell2:
-                self.cell2.check_for_capture(self._current_player)
+            if not self._captured:
+                self._captured = True
+                self._highlighted = False
+                self._bg_color = EDGE_COLOR_CAPTURED
 
         self.draw()
 
     def __str__(self) -> str:
-        if self._cell1 and self._cell2:
-            return f'{type(self).__name__}[{self.row},{self.col}]: ' \
-                f'origin={self.topleft} size={self.size} ' \
-                f'cell_1={self._cell1.row},{self._cell1.col} ' \
-                f'cell_2={self._cell2.row},{self._cell2.col}'
-        elif self._cell1:
-            return f'{type(self).__name__}[{self.row},{self.col}]: ' \
-                f'origin={self.topleft} size={self.size} ' \
-                f'cell_1={self._cell1.row},{self._cell1.col} cell_2=None'
-        elif self._cell2:
-            return f'{type(self).__name__}[{self.row},{self.col}]: ' \
-                f'origin={self.topleft} size={self.size} ' \
-                f'cell_1=None cell_2={self._cell2.row},{self._cell2.col}'
-        else:
-            return f'{type(self).__name__}[{self.row},{self.col}]: ' \
-                f'origin={self.topleft} size={self.size} ' \
-                f'cell_1=None cell_2=None'
+        return f'{type(self).__name__}: origin={self.topleft} size={self.size}'
 
     def __repr__(self) -> str:
         return repr(self)

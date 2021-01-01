@@ -60,11 +60,16 @@ class Dots:
             raise Exception('Only two to four players are allowed')
 
         self._game = Game(self._players)
-        # self._scoreboard = Scoreboard(self._cfg.SCOREBOARD_ORIGIN,
-        #     self._cfg.SCOREBOARD_SIZE, LIGHT_GRAY, self._game)
-        # self._board = Board(
-        #     x_shift=0, y_shift=self._cfg.SCOREBOARD_HEIGHT+GAP_20)
-        self._board = Board()
+        self._scoreboard = Scoreboard(self._cfg.SCOREBOARD_ORIGIN,
+            self._cfg.SCOREBOARD_SIZE, LIGHT_GRAY, self._game)
+        self._board = Board(
+            x_shift=0, y_shift=self._cfg.SCOREBOARD_HEIGHT+GAP_20)
+        # self._board = Board()
+
+        self._current_player: Player = self._game.current_player()
+        self._highlighted_edge: Edge = None
+        self._cell_captured: bool = False
+        self._captured_edge: Edge = None
 
         # self._play_again_button = Button(
         #     (screen_rect.width // 2 - 50, screen_rect.height - 70), (100, 35),
@@ -75,15 +80,10 @@ class Dots:
 
     def run(self):
         # Game play loop
-        self._current_player = self._game.current_player()
-        self._highlighted_edge = None
-        self._cell_captured = False
-        self._captured_edge = None
-
         while not self._done:
             self._clock.tick(30)
             self.handle_events()
-            self.run_logic()
+            self.check_game_state()
             self.draw()
 
     def handle_events(self):
@@ -95,20 +95,34 @@ class Dots:
             if event.type == pg.MOUSEMOTION:
                 edge = self._board.get_edge(event.pos)
                 if edge:
-                    self._board.highlight_edge(edge)
-                else:
-                    self._board.unhighlight_edge()
+                    edge.handle_event(event)
+                    self._highlighted_edge = edge
+                elif self._highlighted_edge:
+                    self._highlighted_edge.clear()
 
             elif event.type == pg.MOUSEBUTTONUP:
                 edge = self._board.get_edge(event.pos)
-                if edge and not edge.captured:
-                    self._board.capture_edge(edge)
-                    self._captured_edge = edge
+                if edge:
+                    edge.handle_event(event)
+                    if edge.captured:
+                        self._captured_edge = edge
 
             # self._play_again_button.handle_event(event)
 
-    def run_logic(self):
+    def check_game_state(self):
         if self._captured_edge:
+            cell1_captured, cell2_captured = False, False
+
+            if self._captured_edge.cell1:
+                cell1_captured = self._captured_edge.cell1.check_for_capture(
+                    self._current_player)
+            if self._captured_edge.cell2:
+                cell2_captured = self._captured_edge.cell2.check_for_capture(
+                    self._current_player)
+
+            if not cell1_captured and not cell2_captured:
+                self._current_player = self._game.next_player()
+            
             self._captured_edge = None
 
     def draw(self):

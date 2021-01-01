@@ -11,14 +11,12 @@ class Dot(Entity):
 
     def draw(self) -> None:
         pg.draw.rect(self._screen, self._bg_color, self)
-        # pg.display.update(self)
 
     def handle_event(self, event: pg.event) -> None:
         return
 
     def __str__(self) -> str:
-        return f'{type(self).__name__}[{self._row},{self._col}]: ' \
-            f'origin={self.topleft} size={self._size}'
+        return f'{type(self).__name__}: origin={self.topleft} size={self.size}'
 
     def __repr__(self) -> str:
         return str(self)

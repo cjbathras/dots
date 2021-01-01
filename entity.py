@@ -18,14 +18,6 @@ class Entity(pg.Rect, metaclass=ABCMeta):
     @abstractmethod
     def handle_event(self, event: pg.event) -> None: pass
 
-    # @property
-    # def row(self) -> int:
-    #     return self._row
-        
-    # @property
-    # def col(self) -> int:
-    #     return self._col
-        
     @property
     def bg_color(self) -> pg.Color:
         return self._bg_color

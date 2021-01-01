@@ -7,7 +7,7 @@ from singleton import Singleton
 class Config(metaclass=Singleton):
     def __init__(self, cell_rows: int=5, cell_cols: int=5,
         cell_size: tuple=(100, 100), num_players: int=2, dot_radius: int=6,
-        gutter_width: int=0):
+        gutter_width: int=20):
 
         self._cell_rows: int = cell_rows
         self._cell_cols: int = cell_cols

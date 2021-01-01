@@ -27,9 +27,9 @@ class Board:
             for c in range(0, self._cfg.CELL_COLS + 1):
                 dot = Dot(
                     ((self._cfg.DOT_DIA + self._cfg.CELL_WIDTH) * c 
-                    + self._cfg.GUTTER_WIDTH + x_shift, 
+                    + self._cfg.GUTTER_WIDTH + self._x_shift, 
                     (self._cfg.DOT_DIA + self._cfg.CELL_HEIGHT) * r 
-                    + self._cfg.GUTTER_WIDTH + y_shift),
+                    + self._cfg.GUTTER_WIDTH + self._y_shift),
                     
                     (self._cfg.DOT_DIA, self._cfg.DOT_DIA),
 
@@ -46,9 +46,9 @@ class Board:
             for c in range(0, self._cfg.CELL_COLS):
                 cell = Cell(
                     ((c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
-                    + self._cfg.GUTTER_WIDTH + x_shift, 
+                    + self._cfg.GUTTER_WIDTH + self._x_shift, 
                     (r + 1) * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT 
-                    + self._cfg.GUTTER_WIDTH + y_shift), 
+                    + self._cfg.GUTTER_WIDTH + self._y_shift), 
 
                     (self._cfg.CELL_WIDTH,  self._cfg.CELL_HEIGHT),
                     
@@ -59,6 +59,9 @@ class Board:
             self._cells.append(row)
 
         # Create the edges
+        # Superrows and supercolumns are rows and columns of a collection
+        # of one dot, two edges, and one cell. This allows for easy grouping
+        # and lookup of edges based on mouse location.
         self._edges: list[list[Edge]] = []
         for r in range(0, self._cfg.CELL_ROWS + 1):
             row = []
@@ -68,9 +71,9 @@ class Board:
                     # horizontal edge
                     h_edge = Edge(
                         ((c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
-                        + self._cfg.GUTTER_WIDTH + x_shift,
+                        + self._cfg.GUTTER_WIDTH + self._x_shift,
                         r * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT 
-                        + self._cfg.GUTTER_WIDTH + y_shift),
+                        + self._cfg.GUTTER_WIDTH + self._y_shift),
 
                         (self._cfg.CELL_WIDTH, self._cfg.DOT_DIA),
 
@@ -78,29 +81,31 @@ class Board:
                     )
                     h_edge.draw()
 
-                    # # Establish cell relationships
-                    # cells = ()
-                    # if r == 0:
-                    #     self._cells[r][c]['edges']['top'] = h_edge
-                    #     cells = (self._cells[r][c],)
-                    # elif r == self._cfg.CELL_ROWS - 1:
-                    #     self._cells[r-1][c]['edges']['bottom'] = h_edge
-                    #     cells = (self._cells[r-1][c],)
-                    # elif r < self._cfg.CELL_ROWS:
-                    #     self._cells[r][c]['edges']['top'] = h_edge
-                    #     self._cells[r-1][c]['edges']['bottom'] = h_edge
-                    #     cells = (self._cells[r][c], self._cells[r-1][c])
+                # Establish cell to edge relationships
+                # top superrow
+                if h_edge and r == 0:
+                    h_edge.cell2 = self._cells[r][c]
+                    self._cells[r][c].edge_top = h_edge
 
-                    # h_edge = {'rect': h_edge, 'is_captured': False, 
-                    #     'cells': cells}
+                # bottom superrow
+                elif h_edge and r == self._cfg.CELL_ROWS:
+                    h_edge.cell1 = self._cells[r-1][c]
+                    self._cells[r-1][c].edge_bottom = h_edge
+
+                # all other superrows
+                elif h_edge:
+                    h_edge.cell1 = self._cells[r-1][c]
+                    h_edge.cell2 = self._cells[r][c]
+                    self._cells[r][c].edge_top = h_edge
+                    self._cells[r-1][c].edge_bottom = h_edge
                 
                 if r < self._cfg.CELL_ROWS:
                     # vertical edge
                     v_edge = Edge(
                         (c * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
-                        + self._cfg.GUTTER_WIDTH + x_shift,
+                        + self._cfg.GUTTER_WIDTH + self._x_shift,
                         (r + 1) * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT 
-                        + self._cfg.GUTTER_WIDTH + y_shift),
+                        + self._cfg.GUTTER_WIDTH + self._y_shift),
 
                         (self._cfg.DOT_DIA, self._cfg.CELL_HEIGHT),
 
@@ -108,21 +113,23 @@ class Board:
                     )
                     v_edge.draw()
 
-                    # # Establish cell relationships
-                    # cells = ()
-                    # if c == 0:
-                    #     self._cells[r][c]['edges']['left'] = v_edge
-                    #     cells = (self._cells[r][c],)
-                    # elif c == self._cfg.CELL_COLS - 1:
-                    #     self._cells[r][c-1]['edges']['right'] = v_edge
-                    #     cells = (self._cells[r][c-1],)
-                    # elif c < self._cfg.CELL_COLS:
-                    #     self._cells[r][c]['edges']['left'] = v_edge
-                    #     self._cells[r][c-1]['edges']['right'] = v_edge
-                    #     cells = (self._cells[r][c], self._cells[r][c-1])
+                # Establish cell to edge relationships
+                # left supercolumn
+                if v_edge and c == 0:
+                    v_edge.cell2 = self._cells[r][c]
+                    self._cells[r][c].edge_left = v_edge
 
-                    # v_edge = {'rect': v_edge, 'is_captured': False, 
-                    #     'cells': cells}
+                # right supercolumn
+                elif v_edge and c == self._cfg.CELL_COLS:
+                    v_edge.cell1 = self._cells[r][c-1]
+                    self._cells[r][c-1].edge_right = v_edge
+
+                # all other supercolumns
+                elif v_edge:
+                    v_edge.cell1 = self._cells[r][c-1]
+                    v_edge.cell2 = self._cells[r][c]
+                    self._cells[r][c].edge_left = v_edge
+                    self._cells[r][c-1].edge_right = v_edge
             
                 # Group the edges into tuples with (usually) two edges per 
                 # tuple. Each tuple is stored by row,col in the edges 2-D list.
@@ -134,17 +141,14 @@ class Board:
                 # a tuple of cells it touches.
                 if h_edge and v_edge:
                     row.append((h_edge, v_edge))
-                elif h_edge:
+                elif h_edge: # bottom row
                     row.append((h_edge,))
-                elif v_edge:
+                elif v_edge: # right col
                     row.append((v_edge,))
-                else:
+                else: # bottom, right corner
                     row.append(())
 
             self._edges.append(row)
-
-        # Now that all the entities have been created, it's time to establish
-        # all of the connection relationships between them.
 
         self.draw()
 
@@ -156,8 +160,10 @@ class Board:
         # Then simply check collidepoint on each edge to see if it contains the 
         # x,y
         x, y = pos
-        row = y // (self._cfg.DOT_DIA + self._cfg.CELL_HEIGHT)
-        col = x // (self._cfg.DOT_DIA + self._cfg.CELL_WIDTH)
+        row = (y - self._y_shift - self._cfg.GUTTER_WIDTH) // \
+            (self._cfg.DOT_DIA + self._cfg.CELL_HEIGHT)
+        col = (x - self._x_shift - self._cfg.GUTTER_WIDTH) // \
+            (self._cfg.DOT_DIA + self._cfg.CELL_WIDTH)
         edges = self._edges[row][col]
 
         for edge in edges:
