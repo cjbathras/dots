@@ -26,11 +26,13 @@ class Button:
         self._surf = pg.Surface(size)
         self._surf.set_colorkey(COLORKEY)
 
-        self.draw()
-
     @property
     def visible(self) -> bool:
         return self._visible
+
+    @visible.setter
+    def visible(self, val: bool) -> None:
+        self._visible = val
 
     def draw(self) -> None:
         if self._visible:

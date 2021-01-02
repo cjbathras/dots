@@ -159,17 +159,20 @@ class Board:
         # col = x // (dd + cw)
         # Then simply check collidepoint on each edge to see if it contains the 
         # x,y
-        x, y = pos
-        row = (y - self._y_shift - self._cfg.GUTTER_WIDTH) // \
-            (self._cfg.DOT_DIA + self._cfg.CELL_HEIGHT)
-        col = (x - self._x_shift - self._cfg.GUTTER_WIDTH) // \
-            (self._cfg.DOT_DIA + self._cfg.CELL_WIDTH)
-        edges = self._edges[row][col]
+        try:
+            x, y = pos
+            row = (y - self._y_shift - self._cfg.GUTTER_WIDTH) // \
+                (self._cfg.DOT_DIA + self._cfg.CELL_HEIGHT)
+            col = (x - self._x_shift - self._cfg.GUTTER_WIDTH) // \
+                (self._cfg.DOT_DIA + self._cfg.CELL_WIDTH)
+            edges = self._edges[row][col]
 
-        for edge in edges:
-            if edge.collidepoint(pos):
-                return edge
-        return None
+            for edge in edges:
+                if edge.collidepoint(pos):
+                    return edge
+            return None
+        except IndexError:
+            return None
 
     def highlight_edge(self, edge: Edge) -> None:
         if not edge.captured and self._highlighted_edge != edge:

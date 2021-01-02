@@ -19,16 +19,16 @@ class Config(metaclass=Singleton):
         self._gutter_width: int = gutter_width
 
     @property
+    def BANNER_SIZE(self) -> tuple:
+        return (self.BANNER_WIDTH, self.BANNER_HEIGHT)
+
+    @property
     def BANNER_WIDTH(self) -> int:
         return self.MIN_ALLOWABLE_SCREEN_WIDTH - 100
 
     @property
     def BANNER_HEIGHT(self) -> int:
         return 70
-
-    @property
-    def BANNER_SIZE(self) -> tuple:
-        return (self.BANNER_WIDTH, self.BANNER_HEIGHT)
 
     @property
     def BOARD_SIZE(self) -> tuple:
@@ -95,6 +95,10 @@ class Config(metaclass=Singleton):
         return (self.GUTTER_WIDTH, self.GUTTER_WIDTH)
 
     @property
+    def SCOREBOARD_SIZE(self) -> tuple:
+        return (self.SCOREBOARD_WIDTH, self.SCOREBOARD_HEIGHT)
+
+    @property
     def SCOREBOARD_WIDTH(self) -> int:
         return self.SCREEN_WIDTH - self.GUTTER_WIDTH*2
 
@@ -102,10 +106,6 @@ class Config(metaclass=Singleton):
     def SCOREBOARD_HEIGHT(self) -> int:
         return self.SCOREBOARD_ROWS * self.SCOREBOX_HEIGHT + \
             (self.SCOREBOARD_ROWS + 1) * GAP_20
-
-    @property
-    def SCOREBOARD_SIZE(self) -> tuple:
-        return (self.SCOREBOARD_WIDTH, self.SCOREBOARD_HEIGHT)
 
     @property
     def SCOREBOARD_ROWS(self) -> int:
@@ -121,16 +121,16 @@ class Config(metaclass=Singleton):
                 return 1
 
     @property
+    def SCOREBOX_SIZE(self) -> tuple:
+        return (self.SCOREBOX_WIDTH, self.SCOREBOX_HEIGHT)
+
+    @property
     def SCOREBOX_WIDTH(self) -> int:
         return 174
 
     @property
     def SCOREBOX_HEIGHT(self) -> int:
         return 40
-
-    @property
-    def SCOREBOX_SIZE(self) -> tuple:
-        return (self.SCOREBOX_WIDTH, self.SCOREBOX_HEIGHT)
 
     @property
     def SCREEN_SIZE(self) -> tuple:
@@ -154,31 +154,23 @@ class Config(metaclass=Singleton):
 
     def __str__(self) -> str:
         return \
-            f'{type(self).__name__}:\n'
-            # f'  min_screen_width={self.MIN_ALLOWABLE_SCREEN_WIDTH}\n' \
-            # f'  rows={self.CELL_ROWS}\n' \
-            # f'  cols={self.CELL_COLS}\n' \
-            # f'  cell_size={self.CELL_SIZE}\n' \
-            # f'  cell_width={self.CELL_WIDTH}\n' \
-            # f'  cell_height={self.CELL_HEIGHT}\n' \
-            # f'  cell_color_default={self.CELL_COLOR_DEFAULT}\n' \
-            # f'  dot_rad={self.DOT_RAD}\n' \
-            # f'  dot_dia={self.DOT_DIA}\n' \
-            # f'  dot_color={self.DOT_COLOR}\n' \
-            # f'  edge_thickness={self.EDGE_THICKNESS}\n' \
-            # f'  edge_color_default={self.EDGE_COLOR_DEFAULT}\n' \
-            # f'  edge_color_captured={self.EDGE_COLOR_ACTIVATED}\n' \
-            # f'  gutter_width={self.GUTTER_WIDTH}\n' \
-            # f'  scoreboard_origin={self.SCOREBOARD_ORIGIN}\n' \
-            # f'  scoreboard_size={self.SCOREBOARD_SIZE}\n' \
-            # f'  scoreboard_width={self.SCOREBOARD_WIDTH}\n' \
-            # f'  scoreboard_height={self.SCOREBOARD_HEIGHT}\n' \
-            # f'  scorebox_width={self.SCOREBOX_WIDTH}\n' \
-            # f'  scorebox_height={self.SCOREBOX_HEIGHT}\n' \
-            # f'  banner_origin={self.BANNER_ORIGIN}\n' \
-            # f'  banner_size={self.BANNER_SIZE}\n' \
-            # f'  banner_width={self.BANNER_WIDTH}\n' \
-            # f'  banner_height={self.BANNER_HEIGHT}'
+            f'{type(self).__name__}:\n' \
+            f'  BANNER_SIZE={self.BANNER_SIZE}\n' \
+            f'  BOARD_SIZE={self.BOARD_SIZE}\n' \
+            f'  CELL_ROWS={self.CELL_ROWS}\n' \
+            f'  CELL_COLS={self.CELL_COLS}\n' \
+            f'  CELL_SIZE={self.CELL_SIZE}\n' \
+            f'  DOT_DIA={self.DOT_DIA}\n' \
+            f'  EDGE_THICKNESS={self.EDGE_THICKNESS}\n' \
+            f'  GUTTER_WIDTH={self.GUTTER_WIDTH}\n' \
+            f'  MIN_ALLOWABLE_SCREEN_WIDTH={self.MIN_ALLOWABLE_SCREEN_WIDTH}\n' \
+            f'  NUM_PLAYERS={self.NUM_PLAYERS}\n' \
+            f'  SCOREBOARD_ORIGIN={self.SCOREBOARD_ORIGIN}\n' \
+            f'  SCOREBOARD_SIZE={self.SCOREBOARD_SIZE}\n' \
+            f'  SCOREBOARD_ROWS={self.SCOREBOARD_ROWS}\n' \
+            f'  SCOREBOX_SIZE={self.SCOREBOX_SIZE}\n' \
+            f'  SCREEN_SIZE={self.SCREEN_SIZE}\n' \
+            f'  SCREEN_CENTER={self.SCREEN_CENTER}\n'
 
     def __repr__(self) -> str:
         return f'{type(self).__name__}'

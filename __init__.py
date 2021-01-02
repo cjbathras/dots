@@ -5,8 +5,6 @@ from typing import TypeVar
 
 from pygame.surfarray import array_colorkey
 
-# TupleOrInt = TypeVar('TupleOrInt', tuple, int)
-
 SHOW_OUTLINE = False
 
 # Color definitions

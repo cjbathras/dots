@@ -11,7 +11,6 @@ class Cell(Entity):
 
         super().__init__(pos, size, bg_color)
         self._captured: bool = False
-        self._captured_by: Player = None
         self._edge_top: Edge = None
         self._edge_bottom: Edge = None
         self._edge_left: Edge = None
@@ -20,10 +19,6 @@ class Cell(Entity):
     @property
     def captured(self) -> bool:
         return self._captured
-
-    @property
-    def captured_by(self) -> Player:
-        return self._captured_by
 
     @property
     def edge_top(self) -> Edge:
@@ -68,7 +63,6 @@ class Cell(Entity):
             and self._edge_left.captured and self._edge_right.captured:
 
             self._captured = True
-            self._captured_by = player
             self._bg_color = player.color
             self.draw()
             return True

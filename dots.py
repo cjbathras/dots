@@ -50,8 +50,16 @@ class Dots:
         self._clock = pg.time.Clock()
         self._screen = screen
         self._cfg = Config()
-
-        screen_rect = self._screen.get_rect()
+        self._game_over = False
+        self._banner = None
+        self._game = None
+        self._scoreboard = None
+        self._board = None
+        self._current_player = None
+        self._highlighted_edge = None
+        self._cell_captured = False
+        self._captured_edge = None
+        self._play_again_button = None
 
         # Create the static components
         if 1 < len(args.p) < 5:
@@ -59,26 +67,28 @@ class Dots:
         else:
             raise Exception('Only two to four players are allowed')
 
+        self.new_game()
+
+    def new_game(self) -> None:
+        # Reset all components for a new game
+        if self._play_again_button:
+            self._play_again_button.visible = False
         self._game = Game(self._players)
         self._scoreboard = Scoreboard(self._cfg.SCOREBOARD_ORIGIN,
             self._cfg.SCOREBOARD_SIZE, LIGHT_GRAY, self._game)
         self._board = Board(
             x_shift=0, y_shift=self._cfg.SCOREBOARD_HEIGHT+GAP_20)
-        # self._board = Board()
-
         self._current_player: Player = self._game.current_player()
         self._highlighted_edge: Edge = None
         self._cell_captured: bool = False
         self._captured_edge: Edge = None
+        self._scoreboard.set_active(self._current_player)
+        self._game_over = False
 
-        # self._play_again_button = Button(
-        #     (screen_rect.width // 2 - 50, screen_rect.height - 70), (100, 35),
-        #     text='Play Again?', visible=False)
-
-    def quit(self):
+    def quit(self) -> None:
         self._done = True
 
-    def run(self):
+    def run(self) -> None:
         # Game play loop
         while not self._done:
             self._clock.tick(30)
@@ -86,52 +96,90 @@ class Dots:
             self.check_game_state()
             self.draw()
 
-    def handle_events(self):
+    def handle_events(self) -> None:
         for event in pg.event.get():
 
             if event.type == pg.QUIT:
                 self._done = True
 
             if event.type == pg.MOUSEMOTION:
-                edge = self._board.get_edge(event.pos)
-                if edge:
-                    edge.handle_event(event)
-                    self._highlighted_edge = edge
-                elif self._highlighted_edge:
-                    self._highlighted_edge.clear()
+                if not self._game_over:
+                    edge = self._board.get_edge(event.pos)
+                    if edge:
+                        edge.handle_event(event)
+                        self._highlighted_edge = edge
+                    elif self._highlighted_edge:
+                        self._highlighted_edge.clear()
 
             elif event.type == pg.MOUSEBUTTONUP:
-                edge = self._board.get_edge(event.pos)
-                if edge:
-                    edge.handle_event(event)
-                    if edge.captured:
-                        self._captured_edge = edge
+                if not self._game_over:
+                    edge = self._board.get_edge(event.pos)
+                    if edge:
+                        edge.handle_event(event)
+                        if edge.captured:
+                            self._captured_edge = edge
 
-            # self._play_again_button.handle_event(event)
+            if self._play_again_button:
+                self._play_again_button.handle_event(event)
 
-    def check_game_state(self):
+    def check_game_state(self) -> None:
         if self._captured_edge:
             cell1_captured, cell2_captured = False, False
 
+            # Check to see if any cells were captured. If so, increment score
+            # of current player for each cell captured.
             if self._captured_edge.cell1:
                 cell1_captured = self._captured_edge.cell1.check_for_capture(
                     self._current_player)
+                if cell1_captured:
+                    self._game.increment_score(self._current_player)
             if self._captured_edge.cell2:
                 cell2_captured = self._captured_edge.cell2.check_for_capture(
                     self._current_player)
+                if cell2_captured:
+                    self._game.increment_score(self._current_player)
 
-            if not cell1_captured and not cell2_captured:
-                self._current_player = self._game.next_player()
-            
+            if cell1_captured or cell2_captured:
+                self._scoreboard.update_score(self._current_player,
+                    self._game.get_score(self._current_player))
+
+            # Check to see if anyone won
+            winners = self._game.check_for_winner()
+            if winners:
+                # If there are winners, display the banner and play again button
+                self._banner = Banner(
+                    pg.Rect(0, 0, self._cfg.SCOREBOARD_WIDTH*0.8, 100),
+                    LIGHT_GRAY)
+                self._banner.draw(winners)
+                self._game_over = True
+
+                self._play_again_button = Button(
+                    (self._banner.centerx - 50, self._banner.bottom + 35), 
+                    (100, 35),
+                    callback=self.new_game,
+                    text='Play Again?', visible=False)
+                self._play_again_button.visible = True
+                self._play_again_button.draw()
+                
+            else:
+                # If no cells were captured, move to next player
+                if not cell1_captured and not cell2_captured:
+                    self._scoreboard.set_inactive(self._current_player)
+                    self._current_player = self._game.next_player()
+                    self._scoreboard.set_active(self._current_player)
+                
             self._captured_edge = None
 
-    def draw(self):
+    def draw(self) -> None:
         pg.display.flip()
 
 
 if __name__ == '__main__':
     try:
+        # Get the command line arguments
         args = parse_args()
+
+        # Initialize the pygame engine
         pg.display.init()
         pg.display.set_caption('Dots')
 
@@ -140,11 +188,12 @@ if __name__ == '__main__':
         cfg = Config(cell_rows=args.r, cell_cols=args.c,
             cell_size=(args.w, args.t), num_players=len(args.p))
 
-        # Initialize pygame
+        # Initialize the display
         screen = pg.display.set_mode(cfg.SCREEN_SIZE)
         screen.fill(BACKGROUND_COLOR)
         pg.display.update()
 
+        # Create the main game object and start the game loop
         dots = Dots(screen, args)
         dots.run()
 

@@ -57,10 +57,17 @@ class Scoreboard:
         pg.display.update(self._rect)
 
     def set_active(self, player: Player) -> None:
-        raise NotImplementedError()
+        self._scoreboxes[player].set_active()
+
+    def set_inactive(self, player: Player) -> None:
+        self._scoreboxes[player].set_inactive()
 
     def update_score(self, player: Player, score: int) -> None:
         self._scoreboxes[player].update_score(score)
+
+    def reset(self) -> None:
+        for _, sb in self._scoreboxes.items():
+            sb.reset()
 
     def __str__(self) -> str:
         return f'{type(self).__name__}: ' \

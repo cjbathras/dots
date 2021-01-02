@@ -13,7 +13,7 @@ class Banner(pg.Rect):
         self.center = (self.screen.get_width() // 2,
             self.screen.get_height() // 2)
 
-    def draw(self, winner: Player) -> None:
+    def draw(self, winner: list[Player]) -> None:
         # Create the message text
         msg = f'{winner[0].name} Wins!' if len(winner) == 1 else "It's a TIE!"
         text = FONT_20.render(msg, True, BLACK)
