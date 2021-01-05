@@ -1,3 +1,6 @@
+"""An abstract base class representing entities in the game board in the game of
+Dots."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,6 +27,10 @@ import pygame as pg
 
 
 class Entity(pg.Rect, metaclass=ABCMeta):
+    """The Entity class derives from the Pygame Rect class so it has all of the
+    functionality of a Rect. This base class is used by the Dot, Edge, and Cell
+    child classes.
+    """
     def __init__(self, pos: tuple, size: tuple, bg_color: pg.Color):
 
         super().__init__(pos, size)
@@ -38,5 +45,6 @@ class Entity(pg.Rect, metaclass=ABCMeta):
 
     @property
     def bg_color(self) -> pg.Color:
+        """Get the background color of the entity."""
         return self._bg_color
 

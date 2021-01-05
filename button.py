@@ -1,3 +1,5 @@
+"""A general button implementation."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,6 +30,7 @@ BUTTON_DOWN = 'down'
 
 
 class Button:
+    """A button that a user can click that performs a function."""
     def __init__(self, pos: tuple, size: tuple, callback: callable=None,
             font: pg.font.Font=FONT_16, text: str='', visible: bool=True,
             text_color: pg.Color=WHITE, radius: int=3):
@@ -48,13 +51,16 @@ class Button:
 
     @property
     def visible(self) -> bool:
+        """Get the button visibility."""
         return self._visible
 
     @visible.setter
     def visible(self, val: bool) -> None:
+        """Set the button visibility."""
         self._visible = val
 
     def draw(self) -> None:
+        """Draw the button on the screen."""
         if self._visible:
             # Get the button's surface and draw a rectangle on it
             self._rect = self._surf.get_rect()
@@ -88,6 +94,7 @@ class Button:
             pg.display.update(self._rect)
 
     def handle_event(self, event: pg.event) -> None:
+        """Handle the mouse events."""
         if self._visible:
             if event.type == pg.MOUSEBUTTONDOWN:
                 if self._rect.collidepoint(event.pos):

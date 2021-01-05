@@ -1,3 +1,5 @@
+"""Represents a single round of play in the game of Dots."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,6 +25,11 @@ from player import Player
 
 
 class Game:
+    """The Game object manages a single round of play of the Dots game. It
+    maintains the list of players playing the game and the current player. It
+    also manages players scores and changing the current player from one player
+    to the next.
+    """
     def __init__(self, players: list[Player]):
         super().__init__()
         self._cfg = Config()
@@ -35,27 +42,35 @@ class Game:
 
     @property
     def is_over(self) -> bool:
+        """Gets the is_over flag."""
         return self._is_over
 
     @property
     def players(self) -> list[Player]:
+        """Gets the list of players in the game."""
         return self._players
 
-    def next_player(self) -> Player:
-        self._player_ptr = (self._player_ptr + 1) % len(self._players)
-        return self.current_player()
-
+    @property
     def current_player(self) -> Player:
+        """Gets the current player."""
         return self._players[self._player_ptr]
 
+    def next_player(self) -> Player:
+        """Sets the current player to the next player in the queue."""
+        self._player_ptr = (self._player_ptr + 1) % len(self._players)
+        return self.current_player
+
     def increment_score(self, player: Player) -> None:
+        """Increments the score of the player by one."""
         self._scores[player] += 1
         self._total += 1
 
     def get_score(self, player: Player) -> int:
+        """Gets the score of the player."""
         return self._scores[player]
 
     def check_for_winner(self) -> list[Player]:
+        """Checks for a winner of the game."""
         if self._total == self._tgt_total:
             self._is_over = True
             # Create a reverse sorted list of (player, score) tuples

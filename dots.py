@@ -1,3 +1,8 @@
+"""Dots is an implementation of the classic game where you draw a bunch of dots
+on a piece of paper in a grid pattern and then players take turns connecting the
+dots. When a square, or cell, is made the player "captures" the cell. The player
+with the greatest number of captured cells at the end of the game wins."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -42,6 +47,7 @@ parser = argparse.ArgumentParser(description=DESCRIPTION)
 
 
 def parse_args():
+    """Parse all of the command line arguments."""
     parser.add_argument('-r', metavar='ROWS', default='4', type=int,
         help='number of rows of cells (default: 4)')
 
@@ -62,6 +68,9 @@ def parse_args():
 
 
 class Dots:
+    """Dots is the main object the encompasses the entire game. It is
+    responsible for instantiating all graphics objects, the game object, the
+    player objects, and managing game play."""
     def __init__(self, screen, args):
         self._done = False
         self._clock = pg.time.Clock()
@@ -87,7 +96,7 @@ class Dots:
         self.new_game()
 
     def new_game(self) -> None:
-        # Reset all components for a new game
+        """Creates a new game and resets all entities."""
         if self._play_again_button:
             self._play_again_button.visible = False
         self._game = Game(self._players)
@@ -95,7 +104,7 @@ class Dots:
             self._cfg.SCOREBOARD_SIZE, LIGHT_GRAY, self._game)
         self._board = Board(
             x_shift=0, y_shift=self._cfg.SCOREBOARD_HEIGHT+GAP_20)
-        self._current_player: Player = self._game.current_player()
+        self._current_player: Player = self._game.current_player
         self._highlighted_edge: Edge = None
         self._cell_captured: bool = False
         self._captured_edge: Edge = None
@@ -103,10 +112,11 @@ class Dots:
         self._game_over = False
 
     def quit(self) -> None:
+        """Set the done flag to True so the game can quit."""
         self._done = True
 
     def run(self) -> None:
-        # Game play loop
+        """Run the main game play loop until commanded to quit."""
         while not self._done:
             self._clock.tick(30)
             self.handle_events()
@@ -114,6 +124,7 @@ class Dots:
             self.draw()
 
     def handle_events(self) -> None:
+        """Handle all game events."""
         for event in pg.event.get():
 
             if event.type == pg.QUIT:
@@ -140,6 +151,7 @@ class Dots:
                 self._play_again_button.handle_event(event)
 
     def check_game_state(self) -> None:
+        """Checks for cell capture and if the game is over."""
         if self._captured_edge:
             cell1_captured, cell2_captured = False, False
 
@@ -188,6 +200,7 @@ class Dots:
             self._captured_edge = None
 
     def draw(self) -> None:
+        """Draws the entire game to the screen."""
         pg.display.flip()
 
 

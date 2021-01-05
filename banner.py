@@ -1,3 +1,5 @@
+"""A banner graphic for the game of Dots."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,6 +27,9 @@ from player import Player
 
 
 class Banner(pg.Rect):
+    """Banner is used to create the graphic at the end of the game to display
+    the winner.
+    """
     def __init__(self, rect: pg.Rect, bg_color: pg.Color):
         super().__init__(rect)
         self.bg_color = bg_color
@@ -34,6 +39,7 @@ class Banner(pg.Rect):
             self.screen.get_height() // 2)
 
     def draw(self, winner: list[Player]) -> None:
+        """Draw the banner to the screen."""
         # Create the message text
         msg = f'{winner[0].name} Wins!' if len(winner) == 1 else "It's a TIE!"
         text = FONT_20.render(msg, True, BLACK)
@@ -50,6 +56,7 @@ class Banner(pg.Rect):
         pg.display.update(self)
 
     def clear(self) -> None:
+        """Clear the banner from the screen."""
         pg.draw.rect(self.screen, BACKGROUND_COLOR, self)
 
     def __str__(self) -> str:

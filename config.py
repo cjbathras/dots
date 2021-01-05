@@ -1,3 +1,5 @@
+"""A global object to store configuration items in the game of Dots."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,6 +27,9 @@ from singleton import Singleton
 
 
 class Config(metaclass=Singleton):
+    """The Config class implements the Singleton design pattern so that every
+    object in the game can access the same configuration items.
+    """
     def __init__(self, cell_rows: int=5, cell_cols: int=5,
         cell_size: tuple=(100, 100), num_players: int=2, dot_radius: int=6,
         gutter_width: int=20):
@@ -40,95 +45,118 @@ class Config(metaclass=Singleton):
 
     @property
     def BANNER_SIZE(self) -> tuple:
+        """The size of the banner, in pixels."""
         return (self.BANNER_WIDTH, self.BANNER_HEIGHT)
 
     @property
     def BANNER_WIDTH(self) -> int:
+        """The width of the banner, in pixels."""
         return self.MIN_ALLOWABLE_SCREEN_WIDTH - 100
 
     @property
     def BANNER_HEIGHT(self) -> int:
+        """The height of the banner, in pixels."""
         return 70
 
     @property
     def BOARD_SIZE(self) -> tuple:
+        """The size of the board, in pixels."""
         return (self.BOARD_WIDTH, self.BOARD_HEIGHT)
 
     @property
     def BOARD_WIDTH(self) -> int:
+        """The width of the board, in pixels."""
         return self.CELL_COLS * self.CELL_WIDTH \
             + (self.CELL_COLS + 1) * self.EDGE_THICKNESS
 
     @property
     def BOARD_HEIGHT(self) -> int:
+        """The height of the board, in pixels."""
         return self.CELL_ROWS * self.CELL_HEIGHT \
             + (self.CELL_ROWS + 1) * self.EDGE_THICKNESS
 
     @property
     def CELL_ROWS(self) -> int:
+        """The number of rows of cells."""
         return self._cell_rows
 
     @property
     def CELL_COLS(self) -> int:
+        """The number of columns of cells."""
         return self._cell_cols
 
     @property
     def CELL_SIZE(self) -> tuple:
+        """The size of a cell, in pixels."""
         return self._cell_size
 
     @property
     def CELL_WIDTH(self) -> int:
+        """The width of a cell, in pixels."""
         return self._cell_size[0]
 
     @property
     def CELL_HEIGHT(self) -> int:
+        """The height of a cell, in pixels."""
         return self._cell_size[1]
 
     @property
     def DOT_RAD(self) -> int:
+        """The radius of a dot, in pixels."""
         return self._dot_rad
 
     @property
     def DOT_DIA(self) -> int:
+        """The diameter of a dot, in pixels."""
         return self.DOT_RAD * 2
 
     @property
     def EDGE_THICKNESS(self) -> int:
+        """The thickness of a edge, in pixels."""
         return self.DOT_DIA
 
     @property
     def GUTTER_WIDTH(self) -> int:
+        """The width of the gutter, in pixels. The gutter is the empty space
+        that offsets the game graphics from the edge of the window."""
         return self._gutter_width
 
     @property
     def MIN_ALLOWABLE_SCREEN_WIDTH(self) -> int:
+        """The minimum number of pixels for the width of the screen."""
         multiplier = 3 if self.NUM_PLAYERS == 3 else 2
         return self.SCOREBOX_WIDTH * multiplier \
             + GAP_30 * (multiplier - 1) + GAP_20 * 2 + self.GUTTER_WIDTH * 2
 
     @property
     def NUM_PLAYERS(self) -> int:
+        """The number of players in the game."""
         return self._num_players
 
     @property
     def SCOREBOARD_ORIGIN(self) -> tuple:
+        """The location of the scoreboard's origin, in pixels."""
         return (self.GUTTER_WIDTH, self.GUTTER_WIDTH)
 
     @property
     def SCOREBOARD_SIZE(self) -> tuple:
+        """The size of the scoreboard, in pixels."""
         return (self.SCOREBOARD_WIDTH, self.SCOREBOARD_HEIGHT)
 
     @property
     def SCOREBOARD_WIDTH(self) -> int:
+        """The width of the scoreboard, in pixels."""
         return self.SCREEN_WIDTH - self.GUTTER_WIDTH*2
 
     @property
     def SCOREBOARD_HEIGHT(self) -> int:
+        """The height of the scoreboard, in pixels."""
         return self.SCOREBOARD_ROWS * self.SCOREBOX_HEIGHT + \
             (self.SCOREBOARD_ROWS + 1) * GAP_20
 
     @property
     def SCOREBOARD_ROWS(self) -> int:
+        """The number of player rows in the scoreboard."""
         one_line_width = self.SCOREBOX_WIDTH * self.NUM_PLAYERS \
             + GAP_20 * 2 + GAP_30 * (self.NUM_PLAYERS - 1)
 
@@ -142,27 +170,33 @@ class Config(metaclass=Singleton):
 
     @property
     def SCOREBOX_SIZE(self) -> tuple:
+        """The size of the scorebox, in pixels."""
         return (self.SCOREBOX_WIDTH, self.SCOREBOX_HEIGHT)
 
     @property
     def SCOREBOX_WIDTH(self) -> int:
+        """The wdith of the scorebox, in pixels."""
         return 174
 
     @property
     def SCOREBOX_HEIGHT(self) -> int:
+        """The height of the scorebox, in pixels."""
         return 40
 
     @property
     def SCREEN_SIZE(self) -> tuple:
+        """The size of the screen, in pixels."""
         return (self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
 
     @property
     def SCREEN_WIDTH(self) -> int:
+        """The width of the screen, in pixels."""
         potential_width = self.BOARD_WIDTH + self.GUTTER_WIDTH * 2
         return max(potential_width, self.MIN_ALLOWABLE_SCREEN_WIDTH)
 
     @property
     def SCREEN_HEIGHT(self) -> int:
+        """The height of the screen, in pixels."""
         return self.CELL_ROWS * self.CELL_HEIGHT \
             + (self.CELL_ROWS + 1) * self.EDGE_THICKNESS \
             + self.GUTTER_WIDTH * 2 \
@@ -170,6 +204,7 @@ class Config(metaclass=Singleton):
 
     @property
     def SCREEN_CENTER(self) -> tuple:
+        """The center of the screen, in pixels."""
         return (self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2)
 
     def __str__(self) -> str:

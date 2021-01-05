@@ -1,3 +1,5 @@
+"""A connection between two dots in the game of Dots."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,6 +28,10 @@ from entity import Entity
 
 
 class Edge(Entity):
+    """An Edge object represents the connection between two dots. The Edge class
+    derives from the Entity abstract base class which in turns derives from the
+    Pygame Rect class so every Edge is also a Rect.
+    """
     def __init__(self, pos: tuple, size: tuple, bg_color: pg.Color):
 
         super().__init__(pos, size, bg_color)
@@ -37,39 +43,50 @@ class Edge(Entity):
 
     @property
     def captured(self) -> bool:
+        """Get the captured flag."""
         return self._captured
 
     @property
     def highlighted(self) -> bool:
+        """Get the highlighted flag."""
         return self._highlighted
 
     @property
     def cell1(self):
+        """Get the first cell associated with edge. By convention this cell is
+        either above or to the left of the edge."""
         return self._cell1
 
     @cell1.setter
     def cell1(self, val) -> None:
+        """Set the first cell associated with edge."""
         self._cell1 = val
 
     @property
     def cell2(self):
+        """Get the second cell associated with edge. By convention this cell is
+        either below or to the right of the edge."""
         return self._cell2
 
     @cell2.setter
     def cell2(self, val) -> None:
+        """Set the second cell associated with edge."""
         self._cell2 = val
 
     def draw(self) -> None:
+        """Draw the edge to the screen."""
         pg.draw.rect(self._screen, self._bg_color, self)
         if not self._captured:
             if self._highlighted:
                 pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED, self, width=1)
 
     def clear(self) -> None:
+        """Clear the highlighted flag."""
         self._highlighted = False
         self.draw()
 
     def handle_event(self, event: pg.event) -> None:
+        """Handle the edge events such as highlighting and capturing."""
         if event.type == pg.MOUSEMOTION:
             self._highlighted = True
 

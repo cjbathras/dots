@@ -1,3 +1,5 @@
+"""A player in the game of Dots."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,6 +24,9 @@ import pygame as pg
 
 
 class Player:
+    """Represents a player in the game of Dots. Each player has a name and a
+    color associated with them.
+    """
     def __init__(self, name: str, color: pg.Color):
         super().__init__()
         self._name = name
@@ -29,10 +34,12 @@ class Player:
 
     @property
     def name(self) -> str:
+        """Gets the name of the player."""
         return self._name
 
     @property
     def color(self) -> pg.Color:
+        """Gets the color of the player."""
         return self._color
 
     def __str__(self) -> str:

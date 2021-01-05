@@ -1,3 +1,5 @@
+"""A location in 2D space in the game of Dots."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,14 +26,21 @@ from entity import Entity
 
 
 class Dot(Entity):
+    """Players try to connect Dot objects to each to try and capture cells. It
+    represents a location in 2D space. The Dot class derives from the Entity
+    abstract base class which in turns derives from the Pygame Rect class so
+    every Dot is also a Rect.
+    """
     def __init__(self, pos: tuple, size: tuple, bg_color: pg.Color):
 
         super().__init__(pos, size, bg_color)
 
     def draw(self) -> None:
+        """Draw the dot to the screen."""
         pg.draw.rect(self._screen, self._bg_color, self)
 
     def handle_event(self, event: pg.event) -> None:
+        """No-op implemenation because a dot handles no events."""
         return
 
     def __str__(self) -> str:

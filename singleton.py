@@ -1,3 +1,5 @@
+"""An implementation of the Singleton design pattern."""
+
 # Copyright 2021 Curt Bathras
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
