@@ -1,3 +1,23 @@
+# Copyright 2021 Curt Bathras
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import argparse
 import traceback
 
@@ -7,18 +27,15 @@ from __init__ import *
 from banner import Banner
 from board import Board
 from button import Button
-from cell import Cell
 from config import Config
-from dot import Dot
 from edge import Edge
-from entity import Entity
 from game import Game
 from player import Player
 from scoreboard import Scoreboard
 
 DESCRIPTION="""
-A simple game of trying to capture as many cells as you can by connecting
-the dots.
+A pygame implementation of the classic game of trying to capture as many cells
+as you can by connecting the dots.
 """
 
 parser = argparse.ArgumentParser(description=DESCRIPTION)
@@ -38,7 +55,7 @@ def parse_args():
         help='height of cells (default: 100 pixels)')
 
     parser.add_argument('-p', metavar='PLAYER', default=['Alice', 'Bob'],
-        nargs='*', help='names of the two - four players (default: Alice Bob)')
+        nargs='*', help='names of the two to four players (default: Alice Bob)')
 
     args = parser.parse_args()
     return args
@@ -114,7 +131,7 @@ class Dots:
             elif event.type == pg.MOUSEBUTTONUP:
                 if not self._game_over:
                     edge = self._board.get_edge(event.pos)
-                    if edge:
+                    if edge and not edge.captured:
                         edge.handle_event(event)
                         if edge.captured:
                             self._captured_edge = edge
@@ -154,20 +171,20 @@ class Dots:
                 self._game_over = True
 
                 self._play_again_button = Button(
-                    (self._banner.centerx - 50, self._banner.bottom + 35), 
+                    (self._banner.centerx - 50, self._banner.bottom + 35),
                     (100, 35),
                     callback=self.new_game,
                     text='Play Again?', visible=False)
                 self._play_again_button.visible = True
                 self._play_again_button.draw()
-                
+
             else:
                 # If no cells were captured, move to next player
                 if not cell1_captured and not cell2_captured:
                     self._scoreboard.set_inactive(self._current_player)
                     self._current_player = self._game.next_player()
                     self._scoreboard.set_active(self._current_player)
-                
+
             self._captured_edge = None
 
     def draw(self) -> None:

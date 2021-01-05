@@ -1,14 +1,31 @@
-import random
+# Copyright 2021 Curt Bathras
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 import pygame as pg
-from typing import TypeVar
-
-from pygame.surfarray import array_colorkey
 
 SHOW_OUTLINE = False
 
 # Color definitions
-COLORKEY: pg.Color           = pg.Color(0, 0, 0) # Colorkey is used for transparency (any pixel with this color will not be drawn on blit)
+# Colorkey is used for transparency (any pixel with this color will not be drawn
+# on blit)
+COLORKEY: pg.Color           = pg.Color(0, 0, 0)
 BLACK: pg.Color              = pg.Color(1, 1, 1)
 BLUE: pg.Color               = pg.Color(0, 0, 255)
 CYAN: pg.Color               = pg.Color(0, 255, 255)
@@ -52,12 +69,6 @@ FONT_20: pg.font.Font = pg.font.Font('fonts/Lato-Regular.ttf', 20)
 FONT_16: pg.font.Font = pg.font.Font('fonts/Lato-Regular.ttf', 16)
 
 # Utility functions
-def is_even(a: int) -> bool:
-    return False if a % 2 else True
-
-def is_odd(a: int) -> bool:
-    return True if a % 2 else False
-
 def get_color() -> pg.Color:
     global PLAYER_COLORS
     return PLAYER_COLORS.pop()

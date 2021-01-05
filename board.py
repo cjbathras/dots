@@ -1,14 +1,31 @@
+# Copyright 2021 Curt Bathras
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 import pygame as pg
 
 from __init__ import *
-from __init__ import is_even
-from __init__ import is_odd
 
 from cell import Cell
 from config import Config
 from dot import Dot
 from edge import Edge
-from entity import Entity
 
 
 class Board:
@@ -26,11 +43,11 @@ class Board:
             row = []
             for c in range(0, self._cfg.CELL_COLS + 1):
                 dot = Dot(
-                    ((self._cfg.DOT_DIA + self._cfg.CELL_WIDTH) * c 
-                    + self._cfg.GUTTER_WIDTH + self._x_shift, 
-                    (self._cfg.DOT_DIA + self._cfg.CELL_HEIGHT) * r 
+                    ((self._cfg.DOT_DIA + self._cfg.CELL_WIDTH) * c
+                    + self._cfg.GUTTER_WIDTH + self._x_shift,
+                    (self._cfg.DOT_DIA + self._cfg.CELL_HEIGHT) * r
                     + self._cfg.GUTTER_WIDTH + self._y_shift),
-                    
+
                     (self._cfg.DOT_DIA, self._cfg.DOT_DIA),
 
                     BLACK
@@ -45,13 +62,13 @@ class Board:
             row = []
             for c in range(0, self._cfg.CELL_COLS):
                 cell = Cell(
-                    ((c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
-                    + self._cfg.GUTTER_WIDTH + self._x_shift, 
-                    (r + 1) * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT 
-                    + self._cfg.GUTTER_WIDTH + self._y_shift), 
+                    ((c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH
+                    + self._cfg.GUTTER_WIDTH + self._x_shift,
+                    (r + 1) * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT
+                    + self._cfg.GUTTER_WIDTH + self._y_shift),
 
                     (self._cfg.CELL_WIDTH,  self._cfg.CELL_HEIGHT),
-                    
+
                     BACKGROUND_COLOR
                 )
                 row.append(cell)
@@ -70,9 +87,9 @@ class Board:
                 if c < self._cfg.CELL_COLS:
                     # horizontal edge
                     h_edge = Edge(
-                        ((c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
+                        ((c + 1) * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH
                         + self._cfg.GUTTER_WIDTH + self._x_shift,
-                        r * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT 
+                        r * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT
                         + self._cfg.GUTTER_WIDTH + self._y_shift),
 
                         (self._cfg.CELL_WIDTH, self._cfg.DOT_DIA),
@@ -98,13 +115,13 @@ class Board:
                     h_edge.cell2 = self._cells[r][c]
                     self._cells[r][c].edge_top = h_edge
                     self._cells[r-1][c].edge_bottom = h_edge
-                
+
                 if r < self._cfg.CELL_ROWS:
                     # vertical edge
                     v_edge = Edge(
-                        (c * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH 
+                        (c * self._cfg.DOT_DIA + c * self._cfg.CELL_WIDTH
                         + self._cfg.GUTTER_WIDTH + self._x_shift,
-                        (r + 1) * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT 
+                        (r + 1) * self._cfg.DOT_DIA + r * self._cfg.CELL_HEIGHT
                         + self._cfg.GUTTER_WIDTH + self._y_shift),
 
                         (self._cfg.DOT_DIA, self._cfg.CELL_HEIGHT),
@@ -130,8 +147,8 @@ class Board:
                     v_edge.cell2 = self._cells[r][c]
                     self._cells[r][c].edge_left = v_edge
                     self._cells[r][c-1].edge_right = v_edge
-            
-                # Group the edges into tuples with (usually) two edges per 
+
+                # Group the edges into tuples with (usually) two edges per
                 # tuple. Each tuple is stored by row,col in the edges 2-D list.
                 # The last column will only have the vertical edge in the tuple.
                 # The last row will only have the horizontal edge in the tuple.
@@ -153,11 +170,11 @@ class Board:
         self.draw()
 
     def get_edge(self, pos: tuple) -> Edge:
-        # To look up the edge to see if it contains the x,y you can quickly 
+        # To look up the edge to see if it contains the x,y you can quickly
         # retrieve the tuple of edges that possibly contains x,y by:
         # row = y // (dd + ch)
         # col = x // (dd + cw)
-        # Then simply check collidepoint on each edge to see if it contains the 
+        # Then simply check collidepoint on each edge to see if it contains the
         # x,y
         try:
             x, y = pos
@@ -180,14 +197,14 @@ class Board:
                 pg.draw.rect(self._screen,
                     EDGE_COLOR_DEFAULT, self._highlighted_edge)
                 pg.display.update(self._highlighted_edge)
-                
+
             pg.draw.rect(self._screen, EDGE_COLOR_CAPTURED, edge, width=1)
             pg.display.update(edge)
             self._highlighted_edge = edge
 
     def unhighlight_edge(self) -> None:
         if self._highlighted_edge:
-            pg.draw.rect(self._screen, EDGE_COLOR_DEFAULT, 
+            pg.draw.rect(self._screen, EDGE_COLOR_DEFAULT,
                 self._highlighted_edge)
             pg.display.update(self._highlighted_edge)
             self._highlighted_edge = None
